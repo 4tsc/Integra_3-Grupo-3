@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, Pressable, Image } from 'react-native';
 
@@ -125,3 +126,15 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+=======
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import Navegador from './src/componets/navegation.js';
+
+export default function App() {
+  return <Navegador/>
+}
+
+
+>>>>>>> 581c44503dd27e001b6272a18fff0ddf817b9c12
