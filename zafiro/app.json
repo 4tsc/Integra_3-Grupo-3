@@ -1,12 +1,7 @@
 {
   "expo": {
-<<<<<<< HEAD
-    "name": "zafiro",
-    "slug": "zafiro",
-=======
     "name": "Zafiro-app",
     "slug": "Zafiro-app",
->>>>>>> 581c44503dd27e001b6272a18fff0ddf817b9c12
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -32,8 +27,4 @@
       "favicon": "./assets/favicon.png"
     }
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 581c44503dd27e001b6272a18fff0ddf817b9c12
