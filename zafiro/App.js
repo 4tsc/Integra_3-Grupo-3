@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import Navegador from './src/componets/navegation.js';
+import React, { useState } from 'react';
+import { View, TextInput, Text, Pressable, Image } from 'react-native';
+import styles from './src/componets/styles/styles.js';
+import Log_in from './src/componets/screens/log_in.jsx';
 
-export default function App() {
-  return <Navegador/>
-}
+export default function App () {
+    return <Log_in/>
+};

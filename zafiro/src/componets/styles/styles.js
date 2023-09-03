@@ -1,10 +1,9 @@
-import { StyleSheet, StatusBar } from "react-native";
+import { StyleSheet } from "react-native-web";
 
 const styles_log = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#0085FF',
-        marginTop: StatusBar.currentHeight
       },
       container2: {
         flex: 1,
@@ -70,53 +69,6 @@ const styles_log = StyleSheet.create({
       },
 })
 const styles_Principal = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  pickerBox: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    padding: 10,
-    marginBottom: 20,
-  },
-  selectedDate: {
-    marginTop: 20,
-    fontSize: 16,
-  },
-})
 
-const styles_Agendar = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pickerBox: {
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "gray",
-    padding: 10,
-    marginBottom: 20,
-  },
-  selectedDateTime: {
-    marginTop: 10,
-    fontSize: 16,
-  },
-  advisorPicker: {
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "gray",
-    padding: 10,
-    marginBottom: 20,
-  },
-  advisorButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 10,
-  },
-});
-export {styles_log, styles_Principal, styles_Agendar};
+})
+export {styles_log, styles_Principal};

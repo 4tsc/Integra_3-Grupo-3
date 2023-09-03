@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Zafiro-app",
-    "slug": "Zafiro-app",
+    "name": "zafiro",
+    "slug": "zafiro",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
