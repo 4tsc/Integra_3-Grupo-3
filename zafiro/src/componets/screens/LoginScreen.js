@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable,TextInput, Image} from 'react-native';
+import { View, Text, Pressable,TextInput, Image, StatusBar} from 'react-native';
 import {styles_log} from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
 
@@ -13,7 +13,9 @@ const Log_in = () => {
     };
 
   return (
+    //probando 
     <View style={styles_log.container}>
+      <StatusBar barStyle="content" backgroundColor="#5D5D5D" />
       <View style={styles_log.container2}>
         {/* Logo UCT debemos mejorar esto */}
         <Image

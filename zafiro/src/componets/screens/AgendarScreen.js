@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { styles_Agendar } from "../styles/styles";
-import { useNavigation } from '@react-navigation/native';
+//probando
 
 const Agendar = () => {
   const genericTime = new Date();
@@ -14,7 +14,6 @@ const Agendar = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedAdvisor, setSelectedAdvisor] = useState(null);
-  const navigation = useNavigation();
 
   const advisors = [
     {
