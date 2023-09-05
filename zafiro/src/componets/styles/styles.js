@@ -119,4 +119,37 @@ const styles_Agendar = StyleSheet.create({
     marginTop: 10,
   },
 });
-export {styles_log, styles_Principal, styles_Agendar};
+
+const styles_Eliminar = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  appointmentItem: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+});
+export {styles_log, styles_Principal, styles_Agendar, styles_Eliminar};
