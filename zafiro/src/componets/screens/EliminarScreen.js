@@ -1,85 +1,94 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
-import { Agenda } from 'react-native-calendars';
-import { Card } from 'react-native-paper';
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Button, Modal } from "react-native";
 
-const timeToString = (time) => {
-    const date = new Date(time);
-    return date.toISOString().split('T')[0];
-}
+const EliminarScreen = () => {
+  const [appointments, setAppointments] = useState([
+    { id: "1", time: "9:00 AM - 10:00 AM", advisor: "Advisor CJP" },
+    { id: "2", time: "11:00 AM - 12:00 PM", advisor: "Advisor CSF" },
+    // Agrega aquí más horas agendadas si es necesario
+  ]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-const App = () => {
-    const [items, setItems] = React.useState({});
-
-    const loadItems = (day) => {
-
-        setTimeout(() => {
-            for (let i = -15; i < 85; i++) {
-                const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-                const strTime = timeToString(time);
-
-                if (!items[strTime]) {
-                    items[strTime] = [];
-
-                    const numItems = Math.floor(Math.random() * 3 + 1);
-                    for (let j = 0; j < numItems; j++) {
-                        items[strTime].push({
-                            name: 'Item for ' + strTime + ' #' + j,
-                            height: Math.max(10, Math.floor(Math.random() * 150)),
-                            day: strTime
-                        });
-                    }
-                }
-            }
-            const newItems = {};
-            Object.keys(items).forEach(key => {
-                newItems[key] = items[key];
-            });
-            setItems(newItems);
-        }, 1000);
+  const handleDelete = () => {
+    if (selectedAppointment) {
+      const updatedAppointments = appointments.filter((appointment) => appointment.id !== selectedAppointment.id);
+      setAppointments(updatedAppointments);
+      setSelectedAppointment(null);
+      setShowDeleteModal(false);
     }
+  };
 
-    const renderItem = (item) => {
-        return (
-            <TouchableOpacity style={styles.item}>
-                <Card>
-                    <Card.Content>
-                        <View>
-                            <Text>{item.name}</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
-            </TouchableOpacity>
-        );
-    }
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Horas Agendadas</Text>
+      <FlatList
+        data={appointments}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedAppointment(item);
+              setShowDeleteModal(true);
+            }}
+            style={styles.appointmentItem}
+          >
+            <Text>{item.time}</Text>
+            <Text>Asesor: {item.advisor}</Text>
+          </TouchableOpacity>
+        )}
+      />
 
-    return (
-        <View style={styles.container}>
-            <Agenda
-                items={items}
-                loadItemsForMonth={loadItems}
-                selected={'2022-07-07'}
-                refreshControl={null}
-                showClosingKnob={true}
-                refreshing={false}
-                renderItem={renderItem}
+      <Modal visible={showDeleteModal} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text>¿Deseas eliminar esta hora agendada?</Text>
+            <Button title="Eliminar" onPress={handleDelete} />
+            <Button
+              title="Cancelar"
+              onPress={() => {
+                setSelectedAppointment(null);
+                setShowDeleteModal(false);
+              }}
             />
-            <StatusBar />
+          </View>
         </View>
-    );
-}
+      </Modal>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    item: {
-        flex: 1,
-        borderRadius: 5,
-        padding: 10,
-        marginRight: 10,
-        marginTop: 17
-    },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  appointmentItem: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
 });
 
-export default App;
+export default EliminarScreen;
