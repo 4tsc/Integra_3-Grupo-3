@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
-import { View, TextInput, Text, Pressable, Image } from 'react-native';
-import styles from './src/componets/styles/styles.js';
-import Log_in from './src/componets/screens/log_in.jsx';
+import Navegador from './src/componets/navegation.js';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 
-export default function App () {
-    return <Log_in/>
-};
+export default function App() {
+  return (
+    <NavigationContainer>
+    <Navegador/>
+    </NavigationContainer>);
+}
+
+

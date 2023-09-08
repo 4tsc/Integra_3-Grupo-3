@@ -1,3 +1,4 @@
+-- prueba
 CREATE TABLE usuario (
     id INT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
