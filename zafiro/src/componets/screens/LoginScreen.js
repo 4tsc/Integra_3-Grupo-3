@@ -13,7 +13,7 @@ const Log_in = () => {
     };
 
   return (
-    //probando
+    //probando 
     <View style={styles_log.container}>
       <StatusBar barStyle="content" backgroundColor="#5D5D5D" />
       <View style={styles_log.container2}>

@@ -2,21 +2,19 @@ import * as React from 'react';
 import { View, TouchableOpacity, Text   } from 'react-native';
 import { styles_Logout } from '../styles/styles';
 import { useNavigation } from '@react-navigation/native';
+import { Pressable } from 'react-native';
 
-
+//probando
 function LogOut() {
   const navigation = useNavigation();
-  const onPressButton = () => {
+  const handlePress = () => {
     navigation.navigate('LogInScreen');
-    };
+  };
   return (
     <View style={styles_Logout.container}>
-       <TouchableOpacity
-        style={styles_Logout.button}
-        onPress={onPressButton}
-      >
-        <Text style={styles_Logout.buttonText}>¿Desea cerrar sesión?</Text>
-      </TouchableOpacity>
+       <Pressable style={styles_Logout.button} onPress={handlePress}>
+          <Text style={styles_Logout.buttonText}>Cerrar Sesión</Text>
+        </Pressable>
     </View>
   );
 }
