@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { View, TouchableOpacity, Text   } from 'react-native';
 import { styles_Logout } from '../styles/styles';
-//probando
+import { useNavigation } from '@react-navigation/native';
+
+
 function LogOut() {
-    const onPressButton = () => {
-        Alert.alert('Botón presionado', '¡El botón ha sido presionado!');
-      };
+  const navigation = useNavigation();
+  const onPressButton = () => {
+    navigation.navigate('LogInScreen');
+    };
   return (
     <View style={styles_Logout.container}>
        <TouchableOpacity
