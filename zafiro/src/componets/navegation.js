@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Log_in from './screens/LoginScreen.js'; 
 import Agendar from './screens/AgendarScreen.js'; 
 import PrincipalScreen from './screens/PrincipalScreen.js';
+import EliminarScreen from './screens/EliminarScreen.js';
 //probando
 
 const Stack = createStackNavigator();
@@ -13,6 +14,7 @@ const Navegador = () => {
       <Stack.Screen name="LogInScreen" options={{ title: 'Inicio de sesión', headerStyle: { backgroundColor: '#01568e' }, headerTintColor: 'white' }} component={Log_in} />
       <Stack.Screen name="PrincipalScreen" options={{ headerShown: false }} component={PrincipalScreen} />
       <Stack.Screen name="Agendar" options={{ title: 'Agendar Hora', headerStyle: { backgroundColor: '#01568e' }, headerTintColor: 'white' }} component={Agendar} />
+      <Stack.Screen name="EliminarScreen" options={{title: 'Eliminar Hora',headerStyle: {backgroundColor: 'blue',},headerTintColor: 'white',}} component={EliminarScreen} />
     </Stack.Navigator>
   );
 };
