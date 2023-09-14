@@ -29,7 +29,7 @@ const App_button = () => {
           />
         </View>
         <view style={styles_menu.item}>
-          <Image source={require('../componets/images/usuarios.png')} style={styles_menu.image} />
+          <Image source={require('../componets/images/recursos.png')} style={styles_menu.image} />
           <Button
             title="DTE"
             color='#00BBE0'
@@ -37,7 +37,7 @@ const App_button = () => {
           />
         </view>
         <View style={styles_menu.item}>
-          <Image source={require('../componets/images/usuarios.png')} style={styles_menu.image} />
+          <Image source={require('../componets/images/recursos.png')} style={styles_menu.image} />
           <Button
             title="Kintun"
             color='#00BBE0'
@@ -45,7 +45,7 @@ const App_button = () => {
           />
         </View>
         <view style={styles_menu.item}>
-          <Image source={require('../componets/images/usuarios.png')} style={styles_menu.image} />
+          <Image source={require('../componets/images/recursos.png')} style={styles_menu.image} />
           <Button
             title="Inkotun"
             color='#00BBE0'
@@ -53,7 +53,7 @@ const App_button = () => {
           />
         </view>
         <View style={styles_menu.item}>
-          <Image source={require('../componets/images/usuarios.png')} style={styles_menu.image} />
+          <Image source={require('../componets/images/recursos.png')} style={styles_menu.image} />
           <Button
             title="Academicos"
             color='#00BBE0'
