@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import Navegador from './src/componets/navegation.js';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
-  return <Navegador/>
+  return (
+    <NavigationContainer>
+    <Navegador/>
+    </NavigationContainer>);
 }
 
 
