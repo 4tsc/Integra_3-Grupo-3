@@ -5,7 +5,6 @@ USE zafiro;
 -- Crear la tabla "usuario"
 CREATE TABLE usuario (
     id INT PRIMARY KEY,
-    pass VARCHAR(50) NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
     rut VARCHAR(12) NOT NULL,
@@ -17,7 +16,6 @@ CREATE TABLE usuario (
 -- Crear la tabla "asesor"
 CREATE TABLE asesor (
     id INT PRIMARY KEY,
-    pass VARCHAR(50) NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
     rut VARCHAR(12) NOT NULL,
