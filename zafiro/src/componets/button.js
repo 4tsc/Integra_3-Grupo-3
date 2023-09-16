@@ -60,6 +60,22 @@ const App_button = () => {
             onPress={() => Alert.alert('Simple Button pressed')}
           />
         </View>
+        <View style={styles_menu.item}>
+          <Image source={require('../componets/images/recursos.png')} style={styles_menu.image} />
+          <Button
+            title="DirectoriosSalas"
+            color='#00BBE0'
+            onPress={() => Alert.alert('Simple Button pressed')}
+          />
+        </View>
+        <View style={styles_menu.item}>
+          <Image source={require('../componets/images/recursos.png')} style={styles_menu.image} />
+          <Button
+            title="FormacionDocente"
+            color='#00BBE0'
+            onPress={() => Alert.alert('Simple Button pressed')}
+          />
+        </View>
       </View>
     </View>
   );
