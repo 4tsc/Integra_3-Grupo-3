@@ -9,9 +9,10 @@ app.use(bodyParser.json());
 
 // Configura el pool de conexiones MySQL
 const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  database: process.env.MYSQL_DATABASE,
+  host: 'localhost',
+  user: 'root',
+  database: 'zafiro',
+  password: '',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -21,9 +22,13 @@ const pool = mysql.createPool({
 app.post('/auth', async (req, res) => {
   const { correo, contraseña } = req.body;
 
+  console.log('Solicitud de inicio de sesión recibida:');
+  console.log('Correo:', correo);
+  console.log('Contraseña:', contraseña);
+
   try {
     const connection = await pool.getConnection();
-    const [rows] = await connection.execute('SELECT * FROM usuarios WHERE correo = ? AND contraseña = ?', [correo, contraseña]);
+    const [rows] = await connection.execute('SELECT * FROM usuario WHERE correo = ? AND pass = ?', [correo, contraseña]);
     connection.release();
 
     if (rows.length === 1) {

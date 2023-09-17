@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, TextInput, Image, StatusBar } from 'react-native';
 import { styles_log } from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
+import * as Crypto from 'expo-crypto';
 
 const Log_in = () => {
   const [text, setText] = useState('');
@@ -9,14 +10,23 @@ const Log_in = () => {
   const navigation = useNavigation();
 
   const handlePress = async () => {
-    // Crear un objeto con los datos a enviar
+
     const data = {
       correo: text,
       contraseña: text2,
     };
 
     try {
-      const response = await fetch('http://localhost:8080/auth', {
+
+      const hashedPassword = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        text2
+      );
+  
+      // Usar la contraseña encriptada en lugar de la original
+      data.contraseña = hashedPassword;
+
+      const response = await fetch('http://(tuip4local):8080/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Indicar que se está enviando JSON
