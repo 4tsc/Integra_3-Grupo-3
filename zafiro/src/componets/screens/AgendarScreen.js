@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import axios from "axios"; // Import axios
 import { styles_Agendar } from "../styles/styles";
-import { useNavigation } from '@react-navigation/native';
+//probando
 
 const Agendar = () => {
   const genericTime = new Date();
@@ -15,17 +14,14 @@ const Agendar = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedAdvisor, setSelectedAdvisor] = useState(null);
-  const navigation = useNavigation();
 
   const advisors = [
     {
-      id: 1, // Unique ID for the advisor
       name: "Advisor CJP",
       location: "CJP",
       schedule: "9:00 AM - 5:00 PM",
     },
     {
-      id: 2, // Unique ID for the advisor
       name: "Advisor CSF",
       location: "CSF",
       schedule: "10:00 AM - 6:00 PM",
@@ -47,30 +43,6 @@ const Agendar = () => {
       setSelectedTime(newSelectedTime);
     }
     setShowTimePicker(false);
-  };
-
-  const handleSendAppointment = async () => {
-    if (selectedAdvisor) {
-      // Prepare the data to send to the server
-      const appointmentData = {
-        fecha: selectedDate.toLocaleDateString(),
-        hora: selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        id_usuario: 1, // Placeholder user ID
-        id_asesor: selectedAdvisor.id, // Assuming you have an ID for each advisor
-      };
-
-      try {
-        // Send a POST request to create the appointment
-        const response = await axios.post("/api/create-appointment", appointmentData);
-        console.log("Appointment created:", response.data);
-
-        // Optionally, you can navigate to another screen or perform other actions after the appointment is created.
-        // For example, you can navigate to a confirmation screen.
-        // navigation.navigate("ConfirmationScreen");
-      } catch (error) {
-        console.error("Error creating appointment:", error);
-      }
-    }
   };
 
   return (
@@ -133,7 +105,15 @@ const Agendar = () => {
 
       <Button
         title="Enviar"
-        onPress={handleSendAppointment} // Call the function to send the appointment data
+        onPress={() => {
+          // Acciones con las fechas, horas y asesor seleccionados
+          if (selectedAdvisor) {
+            console.log("Fecha:", selectedDate.toLocaleDateString());
+            console.log("Hora:", selectedTime.toLocaleTimeString());
+            console.log("Asesor:", selectedAdvisor.name);
+            navigation.navigate("EliminarScreen");
+          }
+        }}
       />
     </View>
   );

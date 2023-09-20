@@ -1,85 +1,125 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
-import { Agenda } from 'react-native-calendars';
-import { Card } from 'react-native-paper';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Button, Modal } from "react-native";
+import { styles_Eliminar } from '../styles/styles';
 
-const timeToString = (time) => {
-    const date = new Date(time);
-    return date.toISOString().split('T')[0];
-}
+const EliminarScreen = () => {
+  const [appointments, setAppointments] = useState([
+    { id: "1", time: "9:00 AM - 10:00 AM", advisor: "Advisor CJP" },
+    { id: "2", time: "11:00 AM - 12:00 PM", advisor: "Advisor CSF" },
+    // Agregar aquí más horas agendadas si es necesario
+  ]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [availableTimes, setAvailableTimes] = useState([]);
 
-const App = () => {
-    const [items, setItems] = React.useState({});
+  // Supongamos que aquí obtienes las horas disponibles de alguna fuente de datos.
+  // Para este ejemplo, simplemente generamos algunas horas disponibles ficticias.
+  useEffect(() => {
+    const availableHours = generateAvailableHours();
+    setAvailableTimes(availableHours);
+  }, []);
 
-    const loadItems = (day) => {
+  const generateAvailableHours = () => {
+    const availableHours = [];
 
-        setTimeout(() => {
-            for (let i = -15; i < 85; i++) {
-                const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-                const strTime = timeToString(time);
-
-                if (!items[strTime]) {
-                    items[strTime] = [];
-
-                    const numItems = Math.floor(Math.random() * 3 + 1);
-                    for (let j = 0; j < numItems; j++) {
-                        items[strTime].push({
-                            name: 'Item for ' + strTime + ' #' + j,
-                            height: Math.max(10, Math.floor(Math.random() * 150)),
-                            day: strTime
-                        });
-                    }
-                }
-            }
-            const newItems = {};
-            Object.keys(items).forEach(key => {
-                newItems[key] = items[key];
-            });
-            setItems(newItems);
-        }, 1000);
+    // Simplemente generamos horas disponibles ficticias para los próximos 7 días.
+    const currentDate = new Date();
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(currentDate);
+      date.setDate(currentDate.getDate() + i);
+      const formattedDate = date.toLocaleDateString();
+      availableHours.push(
+        { id: i.toString(), time: `9:00 AM - 10:00 AM (${formattedDate})` },
+        { id: (i + 7).toString(), time: `10:00 AM - 11:00 AM (${formattedDate})` },
+        // Agregar más horas disponibles si es necesario
+      );
     }
 
-    const renderItem = (item) => {
-        return (
-            <TouchableOpacity style={styles.item}>
-                <Card>
-                    <Card.Content>
-                        <View>
-                            <Text>{item.name}</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
-            </TouchableOpacity>
-        );
-    }
+    return availableHours;
+  };
 
-    return (
-        <View style={styles.container}>
-            <Agenda
-                items={items}
-                loadItemsForMonth={loadItems}
-                selected={'2022-07-07'}
-                refreshControl={null}
-                showClosingKnob={true}
-                refreshing={false}
-                renderItem={renderItem}
+  const handleDelete = () => {
+    if (selectedAppointment) {
+      const updatedAppointments = appointments.filter((appointment) => appointment.id !== selectedAppointment.id);
+      setAppointments(updatedAppointments);
+      setSelectedAppointment(null);
+      setShowDeleteModal(false);
+    }
+  };
+
+  return (
+    <View style={styles_Eliminar.container}>
+      <Text style={styles_Eliminar.title}>Horas Agendadas</Text>
+      <FlatList
+        data={appointments}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedAppointment(item);
+              setShowDeleteModal(true);
+            }}
+            style={styles_Eliminar.appointmentItem}
+          >
+            <Text>{item.time}</Text>
+            <Text>Asesor: {item.advisor}</Text>
+          </TouchableOpacity>
+        )}
+      />
+
+      <Modal visible={showDeleteModal} animationType="slide" transparent={true}>
+        <View style={styles_Eliminar.modalContainer}>
+          <View style={styles_Eliminar.modalContent}>
+            <Text>¿Deseas eliminar esta hora agendada?</Text>
+            <Button title="Eliminar" onPress={handleDelete} />
+            <Button
+              title="Cancelar"
+              onPress={() => {
+                setSelectedAppointment(null);
+                setShowDeleteModal(false);
+              }}
             />
-            <StatusBar />
+          </View>
         </View>
-    );
-}
+      </Modal>
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    item: {
-        flex: 1,
-        borderRadius: 5,
-        padding: 10,
-        marginRight: 10,
-        marginTop: 17
-    },
-});
+      {/* Agregar un botón para reagendar */}
+      <Button
+        title="Reagendar Hora"
+        onPress={() => setShowRescheduleModal(true)}
+      />
 
-export default App;
+      {/* Modal para mostrar horas disponibles */}
+      <Modal visible={showRescheduleModal} animationType="slide" transparent={true}>
+        <View style={styles_Eliminar.modalContainer}>
+          <View style={styles_Eliminar.modalContent}>
+            <Text>Selecciona una hora disponible:</Text>
+            <FlatList
+              data={availableTimes}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <Button
+                  title={item.time}
+                  onPress={() => {
+                    // Aquí puedes agregar la lógica para reagendar la hora
+                    console.log("Hora reagendada:", item.time);
+                    setShowRescheduleModal(false);
+                  }}
+                />
+              )}
+            />
+            <Button
+              title="Cancelar"
+              onPress={() => {
+                setShowRescheduleModal(false);
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+export default EliminarScreen;
