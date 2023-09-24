@@ -29,12 +29,12 @@ const AppButton = () => {
   const menuItems = [
     { title: 'Agendar Asesoria', imageSource: require('../componets/images/asesoria.png'), screenName: 'Agendar' },
     { title: 'Recursos', imageSource: require('../componets/images/recursos.png'), screenName: 'Recursos' },
-    { title: 'DTE', imageSource: require('../componets/images/recursos.png'), screenName: 'DTE' },
-    { title: 'Kintun', imageSource: require('../componets/images/recursos.png'), screenName: 'Kintun' },
-    { title: 'Inkotun', imageSource: require('../componets/images/recursos.png'), screenName: 'Inkotun' },
-    { title: 'Academicos', imageSource: require('../componets/images/recursos.png'), screenName: 'Academicos' },
-    { title: 'DirectoriosSalas', imageSource: require('../componets/images/recursos.png'), screenName: 'DirectoriosSalas' },
-    { title: 'FormacionDocente', imageSource: require('../componets/images/recursos.png'), screenName: 'FormacionDocente' },
+    { title: 'DTE', imageSource: require('../componets/images/Logo_UCT.png'), screenName: 'DTE' },
+    { title: 'Kintun', imageSource: require('../componets/images/bandera.png'), screenName: 'Kintun' },
+    { title: 'Inkotun', imageSource: require('../componets/images/inkotun.png'), screenName: 'Inkotun' },
+    { title: 'Academicos', imageSource: require('../componets/images/academico.png'), screenName: 'Academicos' },
+    { title: 'DirectoriosSalas', imageSource: require('../componets/images/sala-de-espera.png'), screenName: 'DirectoriosSalas' },
+    { title: 'FormacionDocente', imageSource: require('../componets/images/formacion.png'), screenName: 'FormacionDocente' },
   ];
 
   const renderItem = ({ item }) => (
