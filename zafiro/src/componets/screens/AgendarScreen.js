@@ -111,7 +111,6 @@ const Agendar = () => {
             console.log("Fecha:", selectedDate.toLocaleDateString());
             console.log("Hora:", selectedTime.toLocaleTimeString());
             console.log("Asesor:", selectedAdvisor.name);
-
             navigation.navigate("EliminarScreen");
           }
         }}
