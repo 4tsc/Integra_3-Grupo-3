@@ -137,15 +137,10 @@ const styles_menu = StyleSheet.create({
   },
   item: {
     flex: 1,
-    backgroundColor: 'blue',
+    
     alignItems: 'center',
     margin: 10,
-    height: '100%',
-    borderRadius: '200px',
-    width: '30%',
-  },
-  flat: {
-    height: '100%',
+    
   },
   image: {
     aspectRatio: 1,
