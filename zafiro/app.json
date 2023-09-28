@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "zaphiroproject",
     "name": "Zafiro-app",
     "slug": "Zafiro-app",
     "version": "1.0.0",
@@ -18,6 +19,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.uct.zafiroapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,6 +27,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "21cfaa19-b5e8-4058-bb3b-d8d21668b342"
+      }
     }
   }
 }
