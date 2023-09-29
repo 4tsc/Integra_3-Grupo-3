@@ -173,4 +173,26 @@ const styles_Logout = StyleSheet.create({
       },
 
 })
+
+const styles_settings = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    alignItems: 'center',
+  },
+  input: {
+    height: 40,
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginVertical: 8,
+    paddingHorizontal: 8,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginVertical: 16,
+  },
+});
 export {styles_log, styles_Principal, styles_Agendar, styles_menu, styles_Logout};
