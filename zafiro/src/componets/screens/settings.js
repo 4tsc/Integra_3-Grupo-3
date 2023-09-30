@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-
+import { styles_settings } from '../styles/styles.js';
 function ProfileScreen() {
   const [name, setName] = useState('John');
   const [lastName, setLastName] = useState('Doe');
@@ -34,37 +34,37 @@ function ProfileScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {image && <Image source={{ uri: image }} style={styles.profileImage} />}
+    <View style={styles_settings.container1}>
+      {image && <Image source={{ uri: image }} style={styles_settings.profileImage} />}
       <TouchableOpacity onPress={pickImage}>
         <Text>Editar Foto de Usuario</Text>
       </TouchableOpacity>
       <TextInput
-        style={styles.input}
+        style={styles_settings.input}
         placeholder="Nombre"
         value={name}
         onChangeText={setName}
       />
       <TextInput
-        style={styles.input}
+        style={styles_settings.input}
         placeholder="Apellido"
         value={lastName}
         onChangeText={setLastName}
       />
       <TextInput
-        style={styles.input}
+        style={styles_settings.input}
         placeholder="Correo Electrónico"
         value={email}
         onChangeText={setEmail}
       />
       <TextInput
-        style={styles.input}
+        style={styles_settings.input}
         placeholder="Rut"
         value={rut}
         onChangeText={setRut}
       />
       <TextInput
-        style={styles.input}
+        style={styles_settings.input}
         placeholder="Número Telefónico"
         keyboardType="numeric"
         maxLength={9}
@@ -76,26 +76,6 @@ function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    alignItems: 'center',
-  },
-  input: {
-    height: 40,
-    width: '100%',
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginVertical: 8,
-    paddingHorizontal: 8,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginVertical: 16,
-  },
-});
+
 
 export default ProfileScreen;

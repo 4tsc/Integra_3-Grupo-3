@@ -175,7 +175,7 @@ const styles_Logout = StyleSheet.create({
 })
 
 const styles_settings = StyleSheet.create({
-  container: {
+  container1: {
     flex: 1,
     padding: 16,
     alignItems: 'center',
@@ -195,4 +195,4 @@ const styles_settings = StyleSheet.create({
     marginVertical: 16,
   },
 });
-export {styles_log, styles_Principal, styles_Agendar, styles_menu, styles_Logout};
+export {styles_log, styles_Principal, styles_Agendar, styles_menu, styles_Logout, styles_settings};
