@@ -15,13 +15,13 @@ const AppButton = () => {
       Linking.openURL('https://dte.uct.cl');
     } else if (screenName === 'Kintun') {
       Linking.openURL('https://biblioteca.uct.cl');
-    } else if (screenName === 'Inkotun') {
+    } else if (screenName === 'Inkatun') {
       Linking.openURL('https://inkatun.uct.cl');
     } else if (screenName === 'Academicos') {
       Linking.openURL('http://academicos.uct.cl');
-    } else if (screenName === 'DirectoriosSalas') {
+    } else if (screenName === 'Directorios Salas') {
       Linking.openURL('https://directoriosalas.uct.cl');
-    } else if (screenName === 'FormacionDocente') {
+    } else if (screenName === 'Formacion Docente') {
       Linking.openURL('https://dte.uct.cl/formaciondocente2023/');
     }
   };
@@ -29,12 +29,12 @@ const AppButton = () => {
   const menuItems = [
     { title: 'Agendar Asesoria', imageSource: require('../componets/images/asesoria.png'), screenName: 'Agendar' },
     { title: 'Recursos', imageSource: require('../componets/images/recursos.png'), screenName: 'Recursos' },
-    { title: 'DTE', imageSource: require('../componets/images/recursos.png'), screenName: 'DTE' },
-    { title: 'Kintun', imageSource: require('../componets/images/recursos.png'), screenName: 'Kintun' },
-    { title: 'Inkotun', imageSource: require('../componets/images/recursos.png'), screenName: 'Inkotun' },
-    { title: 'Academicos', imageSource: require('../componets/images/recursos.png'), screenName: 'Academicos' },
-    { title: 'DirectoriosSalas', imageSource: require('../componets/images/recursos.png'), screenName: 'DirectoriosSalas' },
-    { title: 'FormacionDocente', imageSource: require('../componets/images/recursos.png'), screenName: 'FormacionDocente' },
+    { title: 'DTE', imageSource: require('../componets/images/Logo_UCT.png'), screenName: 'DTE' },
+    { title: 'Kintun', imageSource: require('../componets/images/bandera.png'), screenName: 'Kintun' },
+    { title: 'Inkatun', screenName: 'Inkatun' },
+    { title: 'Academicois', imageSource: require('../componets/images/academico.png'), screenName: 'Academicos' },
+    { title: 'Directorios Salas', imageSource: require('../componets/images/sala-de-espera.png'), screenName: 'Directorios Salas' },
+    { title: 'Formacion Docente', imageSource: require('../componets/images/formacion.png'), screenName: 'Formacion Docente' },
   ];
 
   const renderItem = ({ item }) => (
