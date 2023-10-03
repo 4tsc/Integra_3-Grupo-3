@@ -6,44 +6,54 @@ import {
   SafeAreaView,
   Text,
   Alert,
+  Image,
 } from 'react-native';
 
-const Separator = () => <View style={styles.separator} />;
-
 const App_button = () => (
-  <SafeAreaView >
-    <View>
-      <Text style={styles.title}>
-        Para agendar una sesion de asesoria, presione el boton y complete el formulario.
-        </Text>
-      <Button
-        title="Press me"
-        onPress={() => Alert.alert('Simple Button pressed')}
-      />
-    </View>
-    
+  <SafeAreaView style={styles.container}>
+    <View style={styles.row}>
+      <View style={styles.item}>
+        <Image source={require('../assets/asesoria.png')} style={{width: '50%', height: '55%', borderTopLeftRadius: 25, borderTopRightRadius: 25}} />
+        <Button
+          title="Agendar Asesoria"
+          color='#00BBE0'
+          onPress={() => Alert.alert('Simple Button pressed')}
+        />
+      </View>
+      <View style={styles.item}>
+        <Image source={require('../assets/recursos.png')} style={{width: '50%', height: '55%', borderTopLeftRadius: 25, borderTopRightRadius: 25}} />
+          <Button
+            title="Recursos"
+            color='#00BBE0'
+            onPress={() => Alert.alert('Simple Button pressed')}
+          />
+      </View>
+    </View>    
   </SafeAreaView>
 );
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
-    marginHorizontal: 16,
+    alignItems: 'center',
+    paddingTop: 200,
   },
-  title: {
-    textAlign: 'center',
-    marginVertical: 8,
-  },
-  fixToText: {
+  row : {
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
-  separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+  item: {
+    flex: 2,
+    alignItems: 'center',
+    margin: 10,
   },
+  image: {
+    width: '50%',
+    height: '55%',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+  },
+ 
+  
 });
 
 export default App_button;

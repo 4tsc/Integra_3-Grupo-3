@@ -1,30 +1,21 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TextComponent } from 'react-native';
-import App_button from './component/button';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import HomeScreen from './component/inicio';
-import DetailsScreen from './component/navbar';
+import SettingsScreen from './component/settings';
 
+const Tab = createBottomTabNavigator();
 
-
-export default function App() {
+function App() {
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <HomeScreen />
-      <DetailsScreen />
-      <TextComponent 
-      hola ></TextComponent>
-      <Image source={require('./assets/asesoria1.png')} style={{ width: '50%', height: '15%', borderTopLeftRadius: 25, borderTopRightRadius: 25 }} />
-      <App_button />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Inicio" component={HomeScreen} />
+        <Tab.Screen name="Perfil" component={SettingsScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
