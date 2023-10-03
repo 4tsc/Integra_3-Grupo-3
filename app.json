@@ -1,15 +1,16 @@
 {
   "expo": {
-    "name": "Integra3",
-    "slug": "Integra3",
+    "owner": "zaphiroproject",
+    "name": "Zafiro-app",
+    "slug": "Zafiro-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/Logo_UCT.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ABDAFF"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -18,6 +19,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.uct.zafiroapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,6 +27,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "21cfaa19-b5e8-4058-bb3b-d8d21668b342"
+      }
     }
   }
 }
