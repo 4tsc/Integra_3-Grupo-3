@@ -26,7 +26,7 @@ const Log_in = () => {
       // Usar la contraseña encriptada en lugar de la original
       data.contraseña = hashedPassword;
 
-      const response = await fetch('http://192.168.124.155:8080/auth', {
+      const response = await fetch('http://192.168.0.5:8080/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Indicar que se está enviando JSON

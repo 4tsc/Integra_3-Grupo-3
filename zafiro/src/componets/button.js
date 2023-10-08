@@ -31,8 +31,8 @@ const AppButton = () => {
     { title: 'Recursos', imageSource: require('../componets/images/recursos.png'), screenName: 'Recursos' },
     { title: 'DTE', imageSource: require('../componets/images/Logo_UCT.png'), screenName: 'DTE' },
     { title: 'Kintun', imageSource: require('../componets/images/bandera.png'), screenName: 'Kintun' },
-    { title: 'Inkatun', imageSource: require('../componets/images/inkotun.png'), screenName: 'Inkatun' },
-    { title: 'Academicos', imageSource: require('../componets/images/academico.png'), screenName: 'Academicos' },
+    { title: 'Inkatun', screenName: 'Inkatun' },
+    { title: 'Academicois', imageSource: require('../componets/images/academico.png'), screenName: 'Academicos' },
     { title: 'Directorios Salas', imageSource: require('../componets/images/sala-de-espera.png'), screenName: 'Directorios Salas' },
     { title: 'Formacion Docente', imageSource: require('../componets/images/formacion.png'), screenName: 'Formacion Docente' },
   ];
