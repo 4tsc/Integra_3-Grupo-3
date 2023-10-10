@@ -3,6 +3,9 @@ import { View, Text, Pressable,TextInput, Image, StatusBar} from 'react-native';
 import {styles_log} from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
 
+// web 1076295499568-osg77udhj8i11ucl3actgihdsqj6974v.apps.googleusercontent.com\
+// web 1076295499568-gih7dbad8mi3llpu47nkcko17apegtmh.apps.googleusercontent.com
+// android 1076295499568-jrcq4uhav8b91bpntg202lug834kk1tk.apps.googleusercontent.com
 
 const Log_in = () => {
     const [text, setText] = useState('');

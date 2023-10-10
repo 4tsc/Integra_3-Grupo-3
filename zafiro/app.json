@@ -15,14 +15,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.Zafiro.Zafiroapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.perrosx.Zafiroapp"
+      "package": "com.uct.zafiroapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
