@@ -4,7 +4,7 @@ import Log_in from './screens/LoginScreen.js';
 import Agendar from './screens/AgendarScreen.js'; 
 import PrincipalScreen from './screens/PrincipalScreen.js';
 import EliminarScreen from './screens/EliminarScreen.js';
-//probando
+//test
 
 const Stack = createStackNavigator();
 

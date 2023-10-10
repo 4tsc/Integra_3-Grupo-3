@@ -3,6 +3,7 @@ import { View, Text, Pressable, TextInput, Image, StatusBar } from 'react-native
 import { styles_log } from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
 import * as Crypto from 'expo-crypto';
+//test
 
 const Log_in = () => {
   const [text, setText] = useState('');

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { styles_Agendar } from "../styles/styles";
-//probando
+//test
 
 const Agendar = () => {
   const genericTime = new Date();

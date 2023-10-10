@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, View, Image, FlatList, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles_menu } from './styles/styles.js';
+//test
 
 const AppButton = () => {
   const navigation = useNavigation();
