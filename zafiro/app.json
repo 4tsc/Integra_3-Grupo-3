@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "zaphiroproject",
     "name": "Zafiro-app",
     "slug": "Zafiro-app",
     "version": "1.0.0",
@@ -7,30 +8,29 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/Logo_UCT.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ABDAFF"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.Zafiro.Zafiroapp"
+      "supportsTablet": true
     },
     "android": {
+      "package": "com.uct.zafiroapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.uct.zafiroapp"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "3e425d95-25fd-47de-9157-fda65aa81ee0"
+        "projectId": "21cfaa19-b5e8-4058-bb3b-d8d21668b342"
       }
     }
   }
