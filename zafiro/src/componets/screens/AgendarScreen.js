@@ -1,120 +1,59 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { styles_Agendar } from "../styles/styles";
-//test
+import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import { Picker } from '@react-native-picker/picker'; // Importa Picker de @react-native-picker/picker
+import * as Calendar from 'expo-calendar';
 
 const Agendar = () => {
-  const genericTime = new Date();
-  genericTime.setHours(0, 0, 0, 0); // Hora genérica a las 00:00:00
-  const today = new Date();
+  // Estado local para almacenar la lista de calendarios y el calendario seleccionado.
+  const [calendars, setCalendars] = useState([]);
+  const [selectedCalendarId, setSelectedCalendarId] = useState(null);
 
-  const [selectedDate, setSelectedDate] = useState(today);
-  const [selectedTime, setSelectedTime] = useState(genericTime);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [selectedAdvisor, setSelectedAdvisor] = useState(null);
+  // Función para obtener la lista de calendarios del dispositivo.
+  const getCalendars = async () => {
+    // Solicita permisos para acceder al calendario del dispositivo.
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
 
-  const advisors = [
-    {
-      name: "Advisor CJP",
-      location: "CJP",
-      schedule: "9:00 AM - 5:00 PM",
-    },
-    {
-      name: "Advisor CSF",
-      location: "CSF",
-      schedule: "10:00 AM - 6:00 PM",
-    },
-  ];
-
-  const handleDateChange = (event, date) => {
-    if (date !== undefined) {
-      setSelectedDate(date);
+    if (status === 'granted') {
+      // Si se otorgan permisos, obtén la lista de calendarios disponibles.
+      const calendarList = await Calendar.getCalendarsAsync();
+      setCalendars(calendarList);
+    } else {
+      // Manejar el caso en que el usuario no otorga permiso.
     }
-    setShowDatePicker(false);
   };
 
-  const handleTimeChange = (event, time) => {
-    if (time !== undefined) {
-      // Mantener la fecha seleccionada, pero actualizar la hora
-      const newSelectedTime = new Date(selectedDate);
-      newSelectedTime.setHours(time.getHours(), time.getMinutes(), 0, 0);
-      setSelectedTime(newSelectedTime);
+  // Función para agregar un evento al calendario seleccionado.
+  const addEventToCalendar = async () => {
+    if (selectedCalendarId) {
+      // Crea un objeto de evento con título, fecha de inicio, fecha de fin y zona horaria.
+      const event = {
+        title: 'Mi Evento',
+        startDate: new Date(2023, 9, 16, 10, 0), // Año, Mes (0-11), Día, Hora, Minuto
+        endDate: new Date(2023, 9, 16, 10, 30), // Hora de finalización
+        timeZone: 'America/New_York', // Ajusta la zona horaria según tus necesidades
+      };
+      
+
+      // Utiliza la API de Expo Calendar para crear un evento en el calendario seleccionado.
+      await Calendar.createEventAsync(selectedCalendarId, event);
+      // Manejar el resultado, como confirmar que el evento se agregó correctamente.
     }
-    setShowTimePicker(false);
   };
 
   return (
-    <View style={styles_Agendar.container}>
-      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles_Agendar.pickerBox}>
-        <Text>Selecciona la fecha</Text>
-        {showDatePicker && (
-          <DateTimePicker
-            value={selectedDate}
-            mode="date"
-            is24Hour={true}
-            display="default"
-            onChange={handleDateChange}
-          />
-        )}
-        {selectedDate.getTime() !== today.getTime() && (
-          <Text style={styles_Agendar.selectedDateTime}>
-            Fecha seleccionada: {selectedDate.toLocaleDateString()}
-          </Text>
-        )}
-      </TouchableOpacity>
-      
-      <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles_Agendar.pickerBox}>
-        <Text>Selecciona la hora</Text>
-        {showTimePicker && (
-          <DateTimePicker
-            value={selectedTime}
-            mode="time"
-            is24Hour={true}
-            display="default"
-            onChange={handleTimeChange}
-          />
-        )}
-        {selectedTime.getTime() !== genericTime.getTime() && (
-          <Text style={styles_Agendar.selectedDateTime}>
-            Hora seleccionada: {selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </Text>
-        )}
-      </TouchableOpacity>
+    <View>
+      <Text>Selecciona un calendario:</Text>
+      <Picker
+        selectedValue={selectedCalendarId}
+        onValueChange={(value) => setSelectedCalendarId(value)}
+      >
+        {calendars.map((calendar) => (
+          <Picker.Item key={calendar.id} label={calendar.title} value={calendar.id} />
+        ))}
+      </Picker>
 
-      <View style={styles_Agendar.advisorPicker}>
-        <Text>Selecciona un asesor</Text>
-        <View style={styles_Agendar.advisorButtons}>
-          {advisors.map((advisor, index) => (
-            <Button
-              key={index}
-              title={advisor.name}
-              onPress={() => setSelectedAdvisor(advisor)}
-            />
-          ))}
-        </View>
-        {selectedAdvisor && (
-          <Text style={styles_Agendar.selectedDateTime}>
-            Asesor seleccionado: {selectedAdvisor.name}
-            {"\n"}Ubicación: {selectedAdvisor.location}
-            {"\n"}Horario: {selectedAdvisor.schedule}
-          </Text>
-        )}
-      </View>
-
-      <Button
-        title="Enviar"
-        onPress={() => {
-          // Acciones con las fechas, horas y asesor seleccionados
-          if (selectedAdvisor) {
-            console.log("Fecha:", selectedDate.toLocaleDateString());
-            console.log("Hora:", selectedTime.toLocaleTimeString());
-            console.log("Asesor:", selectedAdvisor.name);
-            navigation.navigate("EliminarScreen");
-          }
-        }}
-      />
+      <Button title="Obtener Calendarios" onPress={getCalendars} />
+      <Button title="Agregar Evento" onPress={addEventToCalendar} />
     </View>
   );
 };

@@ -3,13 +3,14 @@ import { View, Text, Pressable, TextInput, Image, StatusBar } from 'react-native
 import { styles_log } from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
 import * as Crypto from 'expo-crypto';
-//test
 
 const Log_in = () => {
   const [text, setText] = useState('');
   const [text2, setText2] = useState('');
   const navigation = useNavigation();
-
+    const handlePress1 = () => {
+      navigation.navigate('PrincipalScreen');
+    };
   const handlePress = async () => {
 
     const data = {
@@ -83,13 +84,14 @@ const Log_in = () => {
       </View>
 
       <View style={styles_log.container5}>
-        <Pressable style={styles_log.btn} onPress={handlePress}>
+        <Pressable style={styles_log.btn} onPress={handlePress1}>
           <Text style={styles_log.btnText}>Iniciar Sesión</Text>
         </Pressable>
       </View>
 
       <View style={styles_log.texto3}>
         <Pressable>
+	{/* Para saltarse el inicio de sesion con la BD agregar un handlePress1 en la siguiente linea */}
           <Text style={styles_log.testo}>¿Olvidaste tu contraseña?</Text>
         </Pressable>
       </View>

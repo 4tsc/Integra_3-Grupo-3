@@ -2,6 +2,7 @@
   "expo": {
     "owner": "zaphiroproject",
     "name": "Zafiro-app",
+    "scheme": "Zafiro-app" ,
     "slug": "Zafiro-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,8 +22,8 @@
     "android": {
       "package": "com.uct.zafiroapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/Logo_UCT.png",
+        "backgroundColor": "#ABDAFF"
       }
     },
     "web": {
