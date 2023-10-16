@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Button, Modal } from "react-native";
-import { styles_Eliminar } from '../styles/styles';
 
 const EliminarScreen = () => {
   const [appointments, setAppointments] = useState([

@@ -5,7 +5,6 @@ import HomeScreen from './inicio';
 import SettingsScreen from './settings';
 import LogOut from './Logout';
 import Agendar from './AgendarScreen';
-
 const Tab = createBottomTabNavigator();
 //probando
 function PrincipalScreen() {
