@@ -1,42 +1,122 @@
 import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Importa Picker de @react-native-picker/picker
+import { View, Text, Button, Alert } from 'react-native';
+import DatePicker from '@react-native-community/datetimepicker'; // Importa DatePicker desde @react-native-community/datetimepicker
+import TimePicker from '@react-native-community/datetimepicker'; // Importa TimePicker desde @react-native-community/datetimepicker
+import { Picker } from '@react-native-picker/picker';
 import * as Calendar from 'expo-calendar';
 
-const Agendar = () => {
-  // Estado local para almacenar la lista de calendarios y el calendario seleccionado.
+const AgendarScreen = () => {
   const [calendars, setCalendars] = useState([]);
   const [selectedCalendarId, setSelectedCalendarId] = useState(null);
+  const [eventDate, setEventDate] = useState(null);
+  const [eventTime, setEventTime] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
-  // Función para obtener la lista de calendarios del dispositivo.
   const getCalendars = async () => {
-    // Solicita permisos para acceder al calendario del dispositivo.
-    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    try {
+      const { status } = await Calendar.requestCalendarPermissionsAsync();
 
-    if (status === 'granted') {
-      // Si se otorgan permisos, obtén la lista de calendarios disponibles.
-      const calendarList = await Calendar.getCalendarsAsync();
-      setCalendars(calendarList);
-    } else {
-      // Manejar el caso en que el usuario no otorga permiso.
+      if (status === 'granted') {
+        const calendarList = await Calendar.getCalendarsAsync();
+        setCalendars(calendarList);
+      } else {
+        Alert.alert('Permisos no otorgados', 'Debes otorgar permisos de calendario.');
+      }
+    } catch (error) {
+      console.error('Error al obtener calendarios: ' + error.message);
+      Alert.alert('Error', 'No se pudieron obtener los calendarios.');
     }
   };
 
-  // Función para agregar un evento al calendario seleccionado.
-  const addEventToCalendar = async () => {
-    if (selectedCalendarId) {
-      // Crea un objeto de evento con título, fecha de inicio, fecha de fin y zona horaria.
-      const event = {
-        title: 'Mi Evento',
-        startDate: new Date(2023, 9, 16, 10, 0), // Año, Mes (0-11), Día, Hora, Minuto
-        endDate: new Date(2023, 9, 16, 10, 30), // Hora de finalización
-        timeZone: 'America/New_York', // Ajusta la zona horaria según tus necesidades
-      };
-      
+  const getCalendarNameById = (calendarId) => {
+    const selectedCalendar = calendars.find((calendar) => calendar.id === calendarId);
+    return selectedCalendar ? selectedCalendar.title : 'Desconocido';
+  };
 
-      // Utiliza la API de Expo Calendar para crear un evento en el calendario seleccionado.
-      await Calendar.createEventAsync(selectedCalendarId, event);
-      // Manejar el resultado, como confirmar que el evento se agregó correctamente.
+  const addEventToCalendar = async () => {
+    if (selectedCalendarId && eventDate && eventTime) {
+      try {
+        const selectedDateTime = new Date(eventDate);
+        selectedDateTime.setHours(eventTime.getHours());
+        selectedDateTime.setMinutes(eventTime.getMinutes());
+
+        const now = new Date(); // Hora actual
+        const maxEndTime = new Date(selectedDateTime.getTime() + 30 * 60 * 1000); // Evento de 30 minutos
+
+        if (
+          selectedDateTime.getDay() !== 0 && // No es Domingo
+          selectedDateTime.getDay() !== 6 && // No es Sábado
+          selectedDateTime.getHours() >= 14 &&
+          selectedDateTime.getHours() < 16 &&
+          maxEndTime <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) // Dentro de una semana
+        ) {
+          const event = {
+            title: 'Mi Evento',
+            startDate: selectedDateTime,
+            endDate: maxEndTime,
+            timeZone: 'America/Santiago',
+          };
+
+          const eventId = await Calendar.createEventAsync(selectedCalendarId, event);
+          const calendarName = getCalendarNameById(selectedCalendarId);
+          console.log('Evento creado en el calendario:', calendarName);
+          console.log('Evento creado con éxito. ID del evento:', eventId);
+        } else {
+          Alert.alert(
+            'Error',
+            'No puedes crear un evento en este horario o fecha. Verifica las restricciones.'
+          );
+        }
+      } catch (error) {
+        console.error('Error al crear evento: ' + error.message);
+        Alert.alert('Error', 'No se pudo crear el evento.');
+      }
+    } else {
+      Alert.alert('Calendario no seleccionado', 'Debes seleccionar un calendario, fecha y hora primero.');
+    }
+  };
+
+  const showDatePickerModal = () => {
+    setShowDatePicker(true);
+  };
+
+  const hideDatePickerModal = () => {
+    setShowDatePicker(false);
+  };
+
+  const showTimePickerModal = () => {
+    setShowTimePicker(true);
+  };
+
+  const hideTimePickerModal = () => {
+    setShowTimePicker(false);
+  };
+
+  const onDateChange = (event, selectedDate) => {
+    hideDatePickerModal();
+    if (selectedDate) {
+      // Valida que el día seleccionado sea de lunes a viernes
+      if (selectedDate.getDay() >= 1 && selectedDate.getDay() <= 5) {
+        setEventDate(selectedDate);
+      } else {
+        Alert.alert('Error', 'Debes seleccionar un día de lunes a viernes.');
+      }
+    }
+  };
+
+  const onTimeChange = (event, selectedTime) => {
+    hideTimePickerModal();
+    if (selectedTime) {
+      // Obtiene las horas de la hora seleccionada
+      const selectedHours = selectedTime.getHours();
+  
+      // Valida que la hora seleccionada esté entre las 14:00 y las 15:59
+      if (selectedHours >= 14 && selectedHours < 16) {
+        setEventTime(selectedTime);
+      } else {
+        Alert.alert('Error', 'Debes seleccionar un horario entre las 14:00 y las 15:59.');
+      }
     }
   };
 
@@ -52,10 +132,32 @@ const Agendar = () => {
         ))}
       </Picker>
 
+      <Button title="Seleccionar Fecha" onPress={showDatePickerModal} />
+      {showDatePicker && (
+        <DatePicker
+          value={eventDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={onDateChange}
+          minimumDate={new Date()} // Restringe a fechas futuras
+          maximumDate={new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)} // Hasta una semana en el futuro
+        />
+      )}
+
+      <Button title="Seleccionar Hora" onPress={showTimePickerModal} />
+      {showTimePicker && (
+        <TimePicker
+          value={eventTime || new Date()}
+          mode="time"
+          display="default"
+          onChange={onTimeChange}
+        />
+      )}
+
       <Button title="Obtener Calendarios" onPress={getCalendars} />
       <Button title="Agregar Evento" onPress={addEventToCalendar} />
     </View>
   );
 };
 
-export default Agendar;
+export default AgendarScreen;
