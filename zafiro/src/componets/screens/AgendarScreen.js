@@ -1,122 +1,163 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { styles_Agendar } from "../styles/styles";
-//probando
+import React, { useState } from 'react';
+import { View, Text, Button, Alert } from 'react-native';
+import DatePicker from '@react-native-community/datetimepicker'; // Importa DatePicker desde @react-native-community/datetimepicker
+import TimePicker from '@react-native-community/datetimepicker'; // Importa TimePicker desde @react-native-community/datetimepicker
+import { Picker } from '@react-native-picker/picker';
+import * as Calendar from 'expo-calendar';
 
-const Agendar = () => {
-  const genericTime = new Date();
-  genericTime.setHours(0, 0, 0, 0); // Hora genérica a las 00:00:00
-  const today = new Date();
-
-  const [selectedDate, setSelectedDate] = useState(today);
-  const [selectedTime, setSelectedTime] = useState(genericTime);
+const AgendarScreen = () => {
+  const [calendars, setCalendars] = useState([]);
+  const [selectedCalendarId, setSelectedCalendarId] = useState(null);
+  const [eventDate, setEventDate] = useState(null);
+  const [eventTime, setEventTime] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [selectedAdvisor, setSelectedAdvisor] = useState(null);
 
-  const advisors = [
-    {
-      name: "Advisor CJP",
-      location: "CJP",
-      schedule: "9:00 AM - 5:00 PM",
-    },
-    {
-      name: "Advisor CSF",
-      location: "CSF",
-      schedule: "10:00 AM - 6:00 PM",
-    },
-  ];
+  const getCalendars = async () => {
+    try {
+      const { status } = await Calendar.requestCalendarPermissionsAsync();
 
-  const handleDateChange = (event, date) => {
-    if (date !== undefined) {
-      setSelectedDate(date);
+      if (status === 'granted') {
+        const calendarList = await Calendar.getCalendarsAsync();
+        setCalendars(calendarList);
+      } else {
+        Alert.alert('Permisos no otorgados', 'Debes otorgar permisos de calendario.');
+      }
+    } catch (error) {
+      console.error('Error al obtener calendarios: ' + error.message);
+      Alert.alert('Error', 'No se pudieron obtener los calendarios.');
     }
+  };
+
+  const getCalendarNameById = (calendarId) => {
+    const selectedCalendar = calendars.find((calendar) => calendar.id === calendarId);
+    return selectedCalendar ? selectedCalendar.title : 'Desconocido';
+  };
+
+  const addEventToCalendar = async () => {
+    if (selectedCalendarId && eventDate && eventTime) {
+      try {
+        const selectedDateTime = new Date(eventDate);
+        selectedDateTime.setHours(eventTime.getHours());
+        selectedDateTime.setMinutes(eventTime.getMinutes());
+
+        const now = new Date(); // Hora actual
+        const maxEndTime = new Date(selectedDateTime.getTime() + 30 * 60 * 1000); // Evento de 30 minutos
+
+        if (
+          selectedDateTime.getDay() !== 0 && // No es Domingo
+          selectedDateTime.getDay() !== 6 && // No es Sábado
+          selectedDateTime.getHours() >= 14 &&
+          selectedDateTime.getHours() < 16 &&
+          maxEndTime <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) // Dentro de una semana
+        ) {
+          const event = {
+            title: 'Mi Evento',
+            startDate: selectedDateTime,
+            endDate: maxEndTime,
+            timeZone: 'America/Santiago',
+          };
+
+          const eventId = await Calendar.createEventAsync(selectedCalendarId, event);
+          const calendarName = getCalendarNameById(selectedCalendarId);
+          console.log('Evento creado en el calendario:', calendarName);
+          console.log('Evento creado con éxito. ID del evento:', eventId);
+        } else {
+          Alert.alert(
+            'Error',
+            'No puedes crear un evento en este horario o fecha. Verifica las restricciones.'
+          );
+        }
+      } catch (error) {
+        console.error('Error al crear evento: ' + error.message);
+        Alert.alert('Error', 'No se pudo crear el evento.');
+      }
+    } else {
+      Alert.alert('Calendario no seleccionado', 'Debes seleccionar un calendario, fecha y hora primero.');
+    }
+  };
+
+  const showDatePickerModal = () => {
+    setShowDatePicker(true);
+  };
+
+  const hideDatePickerModal = () => {
     setShowDatePicker(false);
   };
 
-  const handleTimeChange = (event, time) => {
-    if (time !== undefined) {
-      // Mantener la fecha seleccionada, pero actualizar la hora
-      const newSelectedTime = new Date(selectedDate);
-      newSelectedTime.setHours(time.getHours(), time.getMinutes(), 0, 0);
-      setSelectedTime(newSelectedTime);
-    }
+  const showTimePickerModal = () => {
+    setShowTimePicker(true);
+  };
+
+  const hideTimePickerModal = () => {
     setShowTimePicker(false);
   };
 
+  const onDateChange = (event, selectedDate) => {
+    hideDatePickerModal();
+    if (selectedDate) {
+      // Valida que el día seleccionado sea de lunes a viernes
+      if (selectedDate.getDay() >= 1 && selectedDate.getDay() <= 5) {
+        setEventDate(selectedDate);
+      } else {
+        Alert.alert('Error', 'Debes seleccionar un día de lunes a viernes.');
+      }
+    }
+  };
+
+  const onTimeChange = (event, selectedTime) => {
+    hideTimePickerModal();
+    if (selectedTime) {
+      // Obtiene las horas de la hora seleccionada
+      const selectedHours = selectedTime.getHours();
+  
+      // Valida que la hora seleccionada esté entre las 14:00 y las 15:59
+      if (selectedHours >= 14 && selectedHours < 16) {
+        setEventTime(selectedTime);
+      } else {
+        Alert.alert('Error', 'Debes seleccionar un horario entre las 14:00 y las 15:59.');
+      }
+    }
+  };
+
   return (
-    <View style={styles_Agendar.container}>
-      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles_Agendar.pickerBox}>
-        <Text>Selecciona la fecha</Text>
-        {showDatePicker && (
-          <DateTimePicker
-            value={selectedDate}
-            mode="date"
-            is24Hour={true}
-            display="default"
-            onChange={handleDateChange}
-          />
-        )}
-        {selectedDate.getTime() !== today.getTime() && (
-          <Text style={styles_Agendar.selectedDateTime}>
-            Fecha seleccionada: {selectedDate.toLocaleDateString()}
-          </Text>
-        )}
-      </TouchableOpacity>
-      
-      <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles_Agendar.pickerBox}>
-        <Text>Selecciona la hora</Text>
-        {showTimePicker && (
-          <DateTimePicker
-            value={selectedTime}
-            mode="time"
-            is24Hour={true}
-            display="default"
-            onChange={handleTimeChange}
-          />
-        )}
-        {selectedTime.getTime() !== genericTime.getTime() && (
-          <Text style={styles_Agendar.selectedDateTime}>
-            Hora seleccionada: {selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </Text>
-        )}
-      </TouchableOpacity>
+    <View>
+      <Text>Selecciona un calendario:</Text>
+      <Picker
+        selectedValue={selectedCalendarId}
+        onValueChange={(value) => setSelectedCalendarId(value)}
+      >
+        {calendars.map((calendar) => (
+          <Picker.Item key={calendar.id} label={calendar.title} value={calendar.id} />
+        ))}
+      </Picker>
 
-      <View style={styles_Agendar.advisorPicker}>
-        <Text>Selecciona un asesor</Text>
-        <View style={styles_Agendar.advisorButtons}>
-          {advisors.map((advisor, index) => (
-            <Button
-              key={index}
-              title={advisor.name}
-              onPress={() => setSelectedAdvisor(advisor)}
-            />
-          ))}
-        </View>
-        {selectedAdvisor && (
-          <Text style={styles_Agendar.selectedDateTime}>
-            Asesor seleccionado: {selectedAdvisor.name}
-            {"\n"}Ubicación: {selectedAdvisor.location}
-            {"\n"}Horario: {selectedAdvisor.schedule}
-          </Text>
-        )}
-      </View>
+      <Button title="Seleccionar Fecha" onPress={showDatePickerModal} />
+      {showDatePicker && (
+        <DatePicker
+          value={eventDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={onDateChange}
+          minimumDate={new Date()} // Restringe a fechas futuras
+          maximumDate={new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)} // Hasta una semana en el futuro
+        />
+      )}
 
-      <Button
-        title="Enviar"
-        onPress={() => {
-          // Acciones con las fechas, horas y asesor seleccionados
-          if (selectedAdvisor) {
-            console.log("Fecha:", selectedDate.toLocaleDateString());
-            console.log("Hora:", selectedTime.toLocaleTimeString());
-            console.log("Asesor:", selectedAdvisor.name);
-            navigation.navigate("EliminarScreen");
-          }
-        }}
-      />
+      <Button title="Seleccionar Hora" onPress={showTimePickerModal} />
+      {showTimePicker && (
+        <TimePicker
+          value={eventTime || new Date()}
+          mode="time"
+          display="default"
+          onChange={onTimeChange}
+        />
+      )}
+
+      <Button title="Obtener Calendarios" onPress={getCalendars} />
+      <Button title="Agregar Evento" onPress={addEventToCalendar} />
     </View>
   );
 };
 
-export default Agendar;
+export default AgendarScreen;

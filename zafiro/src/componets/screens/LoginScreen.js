@@ -4,29 +4,32 @@ import { styles_log } from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
 import * as Crypto from 'expo-crypto';
 
-const Log_in = () => {
+const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
   const [text, setText] = useState('');
   const [text2, setText2] = useState('');
   const navigation = useNavigation();
 
-  const handlePress = async () => {
+  const handlePress1 = () => {
+    onLogin(); // Llama a la función onLogin para indicar que el usuario ha iniciado sesión
+    navigation.navigate('PrincipalScreen');
+  };
 
+  const handlePress = async () => {
     const data = {
       correo: text,
       contraseña: text2,
     };
 
     try {
-
       const hashedPassword = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         text2
       );
-  
+
       // Usar la contraseña encriptada en lugar de la original
       data.contraseña = hashedPassword;
 
-      const response = await fetch('http://192.168.124.155:8080/auth', {
+      const response = await fetch('http://192.168.0.5:8080/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Indicar que se está enviando JSON
@@ -35,7 +38,8 @@ const Log_in = () => {
       });
 
       if (response.status === 200) {
-        // Autenticación exitosa, redireccionar u otras acciones
+        // Autenticación exitosa, llama a la función onLogin para notificar
+        onLogin(); // Llama a la función onLogin para indicar que el usuario ha iniciado sesión
         navigation.navigate('PrincipalScreen');
       } else {
         // Manejar la respuesta de autenticación fallida aquí
@@ -82,13 +86,14 @@ const Log_in = () => {
       </View>
 
       <View style={styles_log.container5}>
-        <Pressable style={styles_log.btn} onPress={handlePress}>
+        <Pressable style={styles_log.btn} onPress={handlePress1}>
           <Text style={styles_log.btnText}>Iniciar Sesión</Text>
         </Pressable>
       </View>
 
       <View style={styles_log.texto3}>
         <Pressable>
+          {/* Para saltarse el inicio de sesión con la BD agregar un handlePress1 en la siguiente línea */}
           <Text style={styles_log.testo}>¿Olvidaste tu contraseña?</Text>
         </Pressable>
       </View>

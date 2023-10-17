@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { View, Text } from 'react-native';
 import App_button from '../button';
-//probando
+//test
+
 function HomeScreen() {
   return (
     <View>    

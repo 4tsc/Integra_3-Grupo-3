@@ -6,7 +6,8 @@ import SettingsScreen from './settings';
 import LogOut from './Logout';
 import Agendar from './AgendarScreen';
 const Tab = createBottomTabNavigator();
-//probando
+//test
+
 function PrincipalScreen() {
   return (
     <Tab.Navigator>
