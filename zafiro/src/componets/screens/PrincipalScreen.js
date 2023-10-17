@@ -4,7 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './inicio';
 import SettingsScreen from './settings';
 import LogOut from './Logout';
-import Agendar from './AgendarScreen';
+// import EventListScreen from './CitasScreen'; //importacion para pantalla de horas reservadas
+
 const Tab = createBottomTabNavigator();
 //test
 
@@ -13,8 +14,10 @@ function PrincipalScreen() {
     <Tab.Navigator>
       <Tab.Screen name="Recursos" options={{ title: 'Recursos', headerStyle: { backgroundColor: '#01568e' }, headerTintColor: 'white', tabBarIcon: ({ color, size }) => (
       <Ionicons name="document"  size={size} color={color} />) }} component={HomeScreen} />
-      <Tab.Screen name="Horas" options={{ title: 'Horas', headerStyle: { backgroundColor: '#01568e' }, headerTintColor: 'white', tabBarIcon: ({ color, size }) => (
-      <Ionicons name="calendar"  size={size} color={color} />) }}  component={SettingsScreen} />
+      <Tab.Screen name="Perfil" options={{ title: 'Perfil', headerStyle: { backgroundColor: '#01568e' }, headerTintColor: 'white', tabBarIcon: ({ color, size }) => (
+      <Ionicons name="person-circle"  size={size} color={color} />) }}  component={SettingsScreen} />
+      {/* <Tab.Screen name= "Reservas" options={{ title: 'Citas', headerStyle: { backgroundColor: '#01568e' }, headerTintColor: 'white', tabBarIcon: ({ color, size }) => (
+      <Ionicons name="calendar"  size={size} color={color} />) }} component={EventListScreen}/> */}
       <Tab.Screen name= "Cerrar sesión'" options={{ title: 'Cerrar sesión', headerStyle: { backgroundColor: '#01568e' }, headerTintColor: 'white', tabBarIcon: ({ color, size }) => (
       <Ionicons name="log-out-outline"  size={size} color={color} />) }} component={LogOut}/>
     </Tab.Navigator>
