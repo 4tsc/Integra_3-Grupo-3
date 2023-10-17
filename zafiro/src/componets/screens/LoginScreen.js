@@ -93,7 +93,6 @@ const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
 
       <View style={styles_log.texto3}>
         <Pressable>
-          {/* Para saltarse el inicio de sesión con la BD agregar un handlePress1 en la siguiente línea */}
           <Text style={styles_log.testo}>¿Olvidaste tu contraseña?</Text>
         </Pressable>
       </View>
