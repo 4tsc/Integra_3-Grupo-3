@@ -92,7 +92,6 @@ const styles_Principal = StyleSheet.create({
     fontSize: 16,
   },
 })
-
 const styles_Agendar = StyleSheet.create({
   container: {
     flex: 1,
@@ -152,7 +151,6 @@ const styles_menu = StyleSheet.create({
     
   },
 });
-
 const styles_Logout = StyleSheet.create({
     container:{
         flex: 1, // Utiliza flex para ocupar todo el espacio vertical
@@ -173,7 +171,6 @@ const styles_Logout = StyleSheet.create({
       },
 
 })
-
 const styles_settings = StyleSheet.create({
   container1: {
     flex: 1,
@@ -195,4 +192,14 @@ const styles_settings = StyleSheet.create({
     marginVertical: 16,
   },
 });
-export {styles_log, styles_Principal, styles_Agendar, styles_menu, styles_Logout, styles_settings};
+const styles_Horas = StyleSheet.create({
+  Horas_Asesor: {
+    flexDirection: 'row', 
+    flexWrap: 'wrap'
+  },
+  Horas_button: {
+    backgroundColor: 'white',
+  },
+});
+ 
+export {styles_log, styles_Principal, styles_Agendar, styles_menu, styles_Logout, styles_settings, styles_Horas};
