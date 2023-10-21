@@ -3,8 +3,8 @@ import { View, TouchableOpacity, Text   } from 'react-native';
 import { styles_Logout } from '../styles/styles';
 import { useNavigation } from '@react-navigation/native';
 import { Pressable } from 'react-native';
+//test
 
-//probando
 function LogOut() {
   const navigation = useNavigation();
   const handlePress = () => {

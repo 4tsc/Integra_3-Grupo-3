@@ -29,7 +29,7 @@ const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
       // Usar la contraseña encriptada en lugar de la original
       data.contraseña = hashedPassword;
 
-      const response = await fetch('http://192.168.124.155:8080/auth', {
+      const response = await fetch('http://192.168.0.5:8080/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Indicar que se está enviando JSON
@@ -93,7 +93,6 @@ const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
 
       <View style={styles_log.texto3}>
         <Pressable>
-          {/* Para saltarse el inicio de sesión con la BD agregar un handlePress1 en la siguiente línea */}
           <Text style={styles_log.testo}>¿Olvidaste tu contraseña?</Text>
         </Pressable>
       </View>
