@@ -125,33 +125,32 @@ const styles_Agendar = StyleSheet.create({
   },
 });
 const styles_menu = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
+  circularItem: {
     alignItems: 'center',
-    // backgroundColor: '#2196f3',
-    width: windowWidth, // Ancho igual al ancho de la pantalla
-    height: windowHeight, // Altura igual a la altura de la pantalla
+    margin: 10,
+  },
+  circularImageContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow: 'hidden',
+    marginBottom: 10,
+  },
+  circularImage: {
+    width: '100%',
+    height: '100%',
+  },
+  itemTitle: {
+    fontSize: 16,
+    color: 'black',
+    marginTop: 5,
   },
   row: {
     flexDirection: 'row',
-  },
-  item: {
-    flex: 1,
-    
-    alignItems: 'center',
-    margin: 10,
-    
-  },
-  image: {
-    aspectRatio: 1,
-    width: (windowWidth * imageWidthPercentage) / 100, // Calcula el ancho según el porcentaje
-    height: (windowHeight* imageHeightPercentage)/100,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    
-    
+    justifyContent: 'center',
   },
 });
+
 
 const styles_Logout = StyleSheet.create({
     container:{

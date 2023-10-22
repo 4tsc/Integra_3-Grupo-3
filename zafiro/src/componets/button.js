@@ -1,29 +1,35 @@
 import React from 'react';
-import { Button, View, Image, FlatList, Linking } from 'react-native';
+import { View, Image, FlatList, Linking, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles_menu } from './styles/styles.js';
-//test
 
 const AppButton = () => {
   const navigation = useNavigation();
 
-  const handlePress = (screenName) => {
-    if (screenName === 'Agendar') {
-      navigation.navigate(screenName);
-    } else if (screenName === 'Recursos') {
-      Linking.openURL('https://www.google.com');
-    } else if (screenName === 'DTE') {
-      Linking.openURL('https://dte.uct.cl');
-    } else if (screenName === 'Kintun') {
-      Linking.openURL('https://biblioteca.uct.cl');
-    } else if (screenName === 'Inkatun') {
-      Linking.openURL('https://inkatun.uct.cl');
-    } else if (screenName === 'Academicos') {
-      Linking.openURL('http://academicos.uct.cl');
-    } else if (screenName === 'Directorios Salas') {
-      Linking.openURL('https://directoriosalas.uct.cl');
-    } else if (screenName === 'Formacion Docente') {
-      Linking.openURL('https://dte.uct.cl/formaciondocente2023/');
+  const handleImagePress = (screenName) => {
+    const linkMap = {
+      'Agendar': 'Agendar',
+      'Recursos': 'https://www.google.com',
+      'DTE': 'https://dte.uct.cl',
+      'Kintun': 'https://biblioteca.uct.cl',
+      'Inkatun': 'https://inkatun.uct.cl',
+      'Academicos': 'http://academicos.uct.cl',
+      'Directorios Salas': 'https://directoriosalas.uct.cl',
+      'Formacion Docente': 'https://dte.uct.cl/formaciondocente2023/',
+    };
+
+    const link = linkMap[screenName];
+
+    if (link) {
+      if (typeof link === 'string') {
+        if (link === 'Agendar') {
+          // Redirigir a la pantalla AgendarScreen
+          navigation.navigate(link);
+        } else {
+          // Abrir enlace en el navegador
+          Linking.openURL(link);
+        }
+      }
     }
   };
 
@@ -32,21 +38,21 @@ const AppButton = () => {
     { title: 'Recursos', imageSource: require('../componets/images/recursos.png'), screenName: 'Recursos' },
     { title: 'DTE', imageSource: require('../componets/images/Logo_UCT.png'), screenName: 'DTE' },
     { title: 'Kintun', imageSource: require('../componets/images/bandera.png'), screenName: 'Kintun' },
-    { title: 'Inkatun', screenName: 'Inkatun' },
-    { title: 'Academicois', imageSource: require('../componets/images/academico.png'), screenName: 'Academicos' },
+    { title: 'Inkatun',imageSource: require('../componets/images/inkatun.png'), screenName: 'Inkatun' },
+    { title: 'Academicos', imageSource: require('../componets/images/academico.png'), screenName: 'Academicos' },
     { title: 'Directorios Salas', imageSource: require('../componets/images/sala-de-espera.png'), screenName: 'Directorios Salas' },
     { title: 'Formacion Docente', imageSource: require('../componets/images/formacion.png'), screenName: 'Formacion Docente' },
   ];
 
   const renderItem = ({ item }) => (
-    <View style={styles_menu.item}>
-      <Image source={item.imageSource} style={styles_menu.image} />
-      <Button
-        title={item.title}
-        color='#00BBE0'
-        onPress={() => handlePress(item.screenName)}
-      />
-    </View>
+    <TouchableOpacity onPress={() => handleImagePress(item.screenName)}>
+      <View style={styles_menu.circularItem}>
+        <View style={styles_menu.circularImageContainer}>
+          <Image source={item.imageSource} style={styles_menu.circularImage} />
+        </View>
+        <Text style={styles_menu.itemTitle}>{item.title}</Text>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
