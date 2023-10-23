@@ -49,3 +49,46 @@ app.post('/auth', async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor en ejecución en el puerto ${port}`);
 });
+
+app.get('/users/:id', async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.execute('SELECT * FROM usuario WHERE id = ?', [userId]);
+    connection.release();
+
+    if (rows.length === 1) {
+      res.status(200).json(rows[0]); // Devuelve el usuario encontrado
+    } else {
+      res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al obtener el usuario:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+
+app.put('/users/:id', async (req, res) => {
+  const userId = req.params.id;
+  const { nombre, correo, contraseña } = req.body;
+
+  try {
+    const connection = await pool.getConnection();
+    const [result] = await connection.execute(
+      'UPDATE usuario SET nombre = ?, correo = ?, rut = ?, pass = ? WHERE id = ?',
+      [nombre, correo, rut , contraseña, userId]
+    );
+    connection.release();
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ mensaje: 'Usuario actualizado exitosamente' });
+    } else {
+      res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al actualizar el usuario:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
