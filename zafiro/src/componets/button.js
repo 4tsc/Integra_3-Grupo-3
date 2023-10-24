@@ -6,10 +6,10 @@ import { styles_menu } from './styles/styles.js';
 const AppButton = () => {
   const navigation = useNavigation();
 
-  const handleImagePress = (screenName) => {
-    const linkMap = {
-      'Agendar': 'Agendar',
-      'Recursos': 'https://www.google.com',
+  const handleImagePress = (screenName) => { // Define una función para manejar el evento de presionar la imagen.
+    const linkMap = { // Crea un mapeo de nombres de pantalla a enlaces o rutas.
+      'Agendar': 'Agendar', // Cuando se presiona 'Agendar', se navegará a la pantalla 'Agendar'
+      'Recursos': 'https://www.google.com', // Cuando se presiona 'Recursos', se abrirá un enlace en el navegador.
       'DTE': 'https://dte.uct.cl',
       'Kintun': 'https://biblioteca.uct.cl',
       'Inkatun': 'https://inkatun.uct.cl',
@@ -18,11 +18,11 @@ const AppButton = () => {
       'Formacion Docente': 'https://dte.uct.cl/formaciondocente2023/',
     };
 
-    const link = linkMap[screenName];
+    const link = linkMap[screenName]; // Obtiene el enlace correspondiente al nombre de pantalla seleccionado.
 
-    if (link) {
-      if (typeof link === 'string') {
-        if (link === 'Agendar') {
+    if (link) { // Si hay un enlace disponible
+      if (typeof link === 'string') { // Si el enlace es una cadena (URL).
+        if (link === 'Agendar') { // Si el enlace es 'Agendar'.
           // Redirigir a la pantalla AgendarScreen
           navigation.navigate(link);
         } else {
@@ -33,7 +33,7 @@ const AppButton = () => {
     }
   };
 
-  const menuItems = [
+  const menuItems = [ // Define una lista de elementos de menú con títulos, imágenes y nombres de pantalla.
     { title: 'Agendar Asesoria', imageSource: require('../componets/images/asesoria.png'), screenName: 'Agendar' },
     { title: 'Recursos', imageSource: require('../componets/images/recursos.png'), screenName: 'Recursos' },
     { title: 'DTE', imageSource: require('../componets/images/Logo_UCT.png'), screenName: 'DTE' },
@@ -44,8 +44,8 @@ const AppButton = () => {
     { title: 'Formacion Docente', imageSource: require('../componets/images/formacion.png'), screenName: 'Formacion Docente' },
   ];
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handleImagePress(item.screenName)}>
+  const renderItem = ({ item }) => ( // Define una función para representar cada elemento del menú.
+    <TouchableOpacity onPress={() => handleImagePress(item.screenName)}> 
       <View style={styles_menu.circularItem}>
         <View style={styles_menu.circularImageContainer}>
           <Image source={item.imageSource} style={styles_menu.circularImage} />
