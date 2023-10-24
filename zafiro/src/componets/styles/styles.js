@@ -127,7 +127,7 @@ const styles_Agendar = StyleSheet.create({
 const styles_menu = StyleSheet.create({
   circularItem: {
     alignItems: 'center',
-    margin: 10,
+    margin: 20,
   },
   circularImageContainer: {
     width: 100,
@@ -139,6 +139,9 @@ const styles_menu = StyleSheet.create({
   circularImage: {
     width: '100%',
     height: '100%',
+   // maxWidth: '80%', // Controla el ancho máximo de las imágenes
+   // maxHeight: '80%', // Controla la altura máxima de las imágenes
+    resizeMode: 'contain', // Esto permite que la imagen se ajuste dentro del contenedor
   },
   itemTitle: {
     fontSize: 16,
