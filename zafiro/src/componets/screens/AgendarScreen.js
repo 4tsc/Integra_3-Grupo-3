@@ -160,7 +160,7 @@ const AgendarScreen = () => {
 
       <Button title="Seleccionar Hora" onPress={showTimePickerModal}  />
       {showTimePicker && (
-          <View style={styles_Horas.Horas_Asesor}>
+          <View>
             <Button title="14:00" onPress={() => selectSpecificTime(14, 0)} />
             <Button title="14:30" onPress={() => selectSpecificTime(14, 30)} />
             <Button title="15:00" onPress={() => selectSpecificTime(15, 0)} />
