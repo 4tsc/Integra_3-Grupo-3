@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Image, FlatList, Linking, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles_menu } from './styles/styles.js';
+import Swiper from 'react-native-swiper';
+
+
 
 const AppButton = () => {
   const navigation = useNavigation();
+  const swiperRef = useRef(null);
+
+  const [autoPlayInterval, setAutoPlayInterval] = useState(null); // Agrega un estado para el intervalo
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (swiperRef.current) {
+        swiperRef.current.scrollBy(1);
+      }
+    }, 5000);
+
+    setAutoPlayInterval(interval); // Almacena el intervalo en el estado
+
+    return () => {
+      clearInterval(autoPlayInterval); // Limpia el intervalo al desmontar el componente
+    };
+  }, []);
 
   const handleImagePress = (screenName) => { // Define una función para manejar el evento de presionar la imagen.
     const linkMap = { // Crea un mapeo de nombres de pantalla a enlaces o rutas.
@@ -64,6 +84,30 @@ const AppButton = () => {
       columnWrapperStyle={styles_menu.row}
     />
   );
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Swiper
+        ref={swiperRef} // Asocia la referencia a Swiper
+        loop={false}
+        autoplay={true}
+        autoplayTimeout={5}
+      >
+        <Image source={require('../componets/images/UCT_logo.png')} style={{ flex: 1 }} />
+        <Image source={require('../componets/images/prueba_2.jpg')} style={{ flex: 1 }} />
+        <Image source={require('../componets/images/prueba_3.jpg')} style={{ flex: 1 }} />
+      </Swiper>
+      <FlatList
+        data={menuItems}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.title}
+        numColumns={2}
+        columnWrapperStyle={styles_menu.row}
+      />
+    </View>
+  );
 };
+
+
 
 export default AppButton;
