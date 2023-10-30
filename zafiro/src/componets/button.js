@@ -85,27 +85,53 @@ const AppButton = () => {
     />
   );
 
-  return (
-    <View style={{ flex: 1 }}>
-      <Swiper
-        ref={swiperRef} // Asocia la referencia a Swiper
-        loop={false}
-        autoplay={true}
-        autoplayTimeout={5}
-      >
-        <Image source={require('../componets/images/UCT_logo.png')} style={{ flex: 1 }} />
-        <Image source={require('../componets/images/prueba_2.jpg')} style={{ flex: 1 }} />
-        <Image source={require('../componets/images/prueba_3.jpg')} style={{ flex: 1 }} />
-      </Swiper>
-      <FlatList
-        data={menuItems}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.title}
-        numColumns={2}
-        columnWrapperStyle={styles_menu.row}
-      />
-    </View>
-  );
+ // return (
+//   <View style={{ flex: 1 }}>
+//     <Swiper
+//       ref={swiperRef} // Asocia la referencia a Swiper
+//       loop={false}
+//       autoplay={true}
+//       autoplayTimeout={5}
+//     >
+//       <Image source={require('../componets/images/UCT_logo.png')} style={{ flex: 1 }} />
+//       <Image source={require('../componets/images/prueba_2.jpg')} style={{ flex: 1 }} />
+//       <Image source={require('../componets/images/prueba_3.jpg')} style{{ flex: 1 }} />
+//     </Swiper>
+//     <FlatList
+//       data={menuItems}
+//       renderItem={renderItem}
+//       keyExtractor={(item) => item.title}
+//       numColumns={2}
+//       columnWrapperStyle={styles_menu.row}
+//     />
+//   </View>
+// );
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// return (
+//   <View style={{ flex: 1 }}>
+//     <Swiper
+//       ref={swiperRef}
+//       loop={false}
+//       autoplay={true}
+//       autoplayTimeout={5}
+//       style={{ width: '100%', height: 200 }} // Establece el ancho y la altura
+//     >
+//       <Image source={require('../componets/images/UCT_logo.png')} style={{ flex: 1 }} />
+//       <Image source={require('../componets/images/prueba_2.jpg')} style={{ flex: 1 }} />
+//       <Image source={require('../componets/images/prueba_3.jpg')} style={{ flex: 1 }} />
+//     </Swiper>
+//     <FlatList
+//       data={menuItems}
+//       renderItem={renderItem}
+//       keyExtractor={(item) => item.title}
+//       numColumns={2}
+//       columnWrapperStyle={styles_menu.row}
+//     />
+//   </View>
+// );
+
+
 };
 
 
