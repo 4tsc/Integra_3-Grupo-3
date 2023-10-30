@@ -14,7 +14,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   database: 'zafiro',
-  password: '',
+  password: '12345678',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -30,12 +30,13 @@ app.post('/auth', async (req, res) => {
 
   try {
     const connection = await pool.getConnection();
-    const [rows] = await connection.execute('SELECT * FROM usuario WHERE correo = ? AND pass = ?', [correo, contraseña]);
+    const [rows] = await connection.execute('SELECT id_usuario FROM usuario WHERE correo = ? AND pass = ?', [correo, contraseña]);
     connection.release();
 
     if (rows.length === 1) {
       // Autenticación exitosa
-      res.status(200).json({ mensaje: 'Autenticación exitosa' });
+      const userId = rows[0].id_usuario; // Obtiene el ID del usuario
+      res.status(200).json({ id: userId }); // Incluye el ID en la respuesta
     } else {
       // Autenticación fallida
       res.status(401).json({ mensaje: 'Autenticación fallida' });
@@ -46,20 +47,20 @@ app.post('/auth', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Servidor en ejecución en el puerto ${port}`);
-});
+// Rutas protegidas que requieren el ID del usuario
 
+// Obtener información de usuario por ID
 app.get('/users/:id', async (req, res) => {
   const userId = req.params.id;
+  console.log('ID del usuario recibido:', userId); // Agrega este log
 
   try {
     const connection = await pool.getConnection();
-    const [rows] = await connection.execute('SELECT * FROM usuario WHERE id = ?', [userId]);
+    const [rows] = await connection.execute('SELECT * FROM usuario WHERE id_usuario = ?', [userId]);
     connection.release();
 
     if (rows.length === 1) {
-      res.status(200).json(rows[0]); // Devuelve el usuario encontrado
+      res.status(200).json(rows[0]);
     } else {
       res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
@@ -70,6 +71,7 @@ app.get('/users/:id', async (req, res) => {
 });
 
 
+// Actualizar información de usuario por ID
 app.put('/users/:id', async (req, res) => {
   const userId = req.params.id;
   const { nombre, correo, contraseña } = req.body;
@@ -77,8 +79,8 @@ app.put('/users/:id', async (req, res) => {
   try {
     const connection = await pool.getConnection();
     const [result] = await connection.execute(
-      'UPDATE usuario SET nombre = ?, correo = ?, rut = ?, pass = ? WHERE id = ?',
-      [nombre, correo, rut , contraseña, userId]
+      'UPDATE usuario SET nombre = ?, correo = ?, pass = ? WHERE id_usuario = ?',
+      [nombre, correo, contraseña, userId]
     );
     connection.release();
 
@@ -91,4 +93,8 @@ app.put('/users/:id', async (req, res) => {
     console.error('Error al actualizar el usuario:', error);
     res.status(500).json({ mensaje: 'Error interno del servidor' });
   }
+});
+
+app.listen(port, () => {
+  console.log(`Servidor en ejecución en el puerto ${port}`);
 });

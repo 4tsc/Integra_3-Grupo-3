@@ -3,41 +3,38 @@ import { View, Text, TextInput, Button, Image, TouchableOpacity, StyleSheet } fr
 import * as ImagePicker from 'expo-image-picker';
 import { styles_settings } from '../styles/styles.js';
 
-function ProfileScreen() {
+function ProfileScreen({ userId }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [rut, setRut] = useState('');
   const [pass, setPass] = useState('');
 
   useEffect(() => {
-    // Aquí debes llamar a una función que obtenga los datos del usuario desde la base de datos y los establezca en el estado.
-    // Por ejemplo:
+    // Definir la función para obtener los datos del usuario
     const fetchUserData = async () => {
       try {
-        const response = await fetch('http://192.168.0.5:8080//users/:id');
+        const response = await fetch(`http://192.168.1.101:8080/users/${userId}`);
         const userData = await response.json();
         setName(userData.nombre);
         setEmail(userData.correo);
-        setRut(userData.rut);
         setPass(userData.pass);
       } catch (error) {
         console.error('Error al cargar los datos del usuario', error);
       }
     };
 
+    // Llamar a la función para cargar los datos del usuario al abrir la ventana
     fetchUserData();
-  }, []);
+  }, [userId]); // Asegurarse de que el efecto se ejecute cuando cambia el userId
 
   const handleSaveChanges = async () => {
-    // Aquí debes enviar los datos editados del usuario de vuelta a la base de datos.
-    // Por ejemplo:
+    // Envía los datos editados del usuario de vuelta a la base de datos
     try {
-      const response = await fetch('http://192.168.0.5:8080//users/:id', {
+      const response = await fetch(`http://192.168.1.101:8080/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre, correo, rut, pass }),
+        body: JSON.stringify({ nombre: name, correo: email, contraseña: pass }),
       });
 
       if (response.ok) {
@@ -67,12 +64,6 @@ function ProfileScreen() {
       />
       <TextInput
         style={styles_settings.input}
-        placeholder="Rut"
-        value={rut}
-        onChangeText={setRut}
-      />
-      <TextInput
-        style={styles_settings.input}
         placeholder="Contraseña"
         value={pass}
         onChangeText={setPass}
@@ -84,3 +75,4 @@ function ProfileScreen() {
 }
 
 export default ProfileScreen;
+
