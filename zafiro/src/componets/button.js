@@ -10,7 +10,7 @@ const AppButton = () => {
   const navigation = useNavigation();
   const swiperRef = useRef(null);
 
-  const [autoPlayInterval, setAutoPlayInterval] = useState(null); // Agrega un estado para el intervalo
+  const [autoPlayInterval, setAutoPlayInterval] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,10 +19,10 @@ const AppButton = () => {
       }
     }, 5000);
 
-    setAutoPlayInterval(interval); // Almacena el intervalo en el estado
+    setAutoPlayInterval(interval);
 
     return () => {
-      clearInterval(autoPlayInterval); // Limpia el intervalo al desmontar el componente
+      clearInterval(autoPlayInterval);
     };
   }, []);
 
