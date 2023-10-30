@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Alert, TextInput } from 'react-native';
+import { View, Text, Button, Alert, TextInput, FlatList } from 'react-native';
 import DatePicker from '@react-native-community/datetimepicker';
 import TimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
@@ -8,6 +8,7 @@ import axios from 'axios';
 import { styles_Horas } from '../styles/styles';
 
 const AgendarScreen = () => {
+  const [asesores, setAsesores] = useState([]);
   const [calendars, setCalendars] = useState([]);
   const [selectedCalendarId, setSelectedCalendarId] = useState(null);
   const [eventDate, setEventDate] = useState(null);
@@ -17,6 +18,17 @@ const AgendarScreen = () => {
   const [motivoConsulta, setMotivoConsulta] = useState('');
   const [modoReunion, setModoReunion] = useState('Presencial'); // Establecer el valor predeterminado en 'Presencial'
   const [selectedModoReunion, setSelectedModoReunion] = useState('Presencial'); // Nuevo estado para el Picker
+
+  const motivoConsultaOptions = [
+    'Virtualización',
+    'Asesoría Docente',
+    'Comunidad de Aprendizaje',
+    'Formación Docente',
+    'Realidades Extendidas',
+    'Diseño de Recursos Multimedia',
+    'Seguimiento y Estudio',
+    'Guías de Aprendizaje',
+  ];
 
   useEffect(() => {
     getCalendars();
@@ -98,6 +110,32 @@ const AgendarScreen = () => {
     }
   };
 
+  const obtenerAsesores = async () => {
+    try {
+      const response = await axios.post('http://tu-servidor/obtener-asesores', {
+        motivoConsulta,
+      });
+  
+      if (response.status === 200) {
+        // Manejar la respuesta exitosa aquí
+        const asesoresObtenidos = response.data.map((asesor) => ({
+          id_asesor: asesor.id_asesor,
+          nombre: asesor.nombre,
+        }));
+        setAsesores(asesoresObtenidos);
+        console.log('Asesores obtenidos:', asesoresObtenidos);
+      } else {
+        // Manejar la respuesta en caso de error
+        console.error('Error al obtener asesores');
+        Alert.alert('Error', 'No se pudieron obtener los asesores.');
+      }
+    } catch (error) {
+      // Manejar errores de red u otros errores aquí
+      console.error('Error de red:', error);
+      Alert.alert('Error', 'No se pudo realizar la solicitud.');
+    }
+  };//TODO solicitar id de los asesores correspondientes a las areas y retornarlos.
+
   const showDatePickerModal = () => {
     setShowDatePicker(true);
   };
@@ -160,7 +198,7 @@ const AgendarScreen = () => {
 
       <Button title="Seleccionar Hora" onPress={showTimePickerModal}  />
       {showTimePicker && (
-          <View style={styles_Horas.Horas_Asesor}>
+          <View>
             <Button title="14:00" onPress={() => selectSpecificTime(14, 0)} />
             <Button title="14:30" onPress={() => selectSpecificTime(14, 30)} />
             <Button title="15:00" onPress={() => selectSpecificTime(15, 0)} />
@@ -184,6 +222,35 @@ const AgendarScreen = () => {
         <Picker.Item label="Virtual" value="Virtual" />
       </Picker>
 
+      <Text>Motivo de Consulta:</Text>
+      <Picker
+        selectedValue={motivoConsulta}
+        onValueChange={(value) => setMotivoConsulta(value)}
+      >
+        {motivoConsultaOptions.map((option) => (
+          <Picker.Item key={option} label={option} value={option} />
+        ))}
+      </Picker>
+
+      <Button title="Obtener Asesores" onPress={obtenerAsesores} />
+
+      {/* Agrega un FlatList para mostrar la lista de asesores */}
+  
+
+
+      <Text>Lista de Asesores:</Text>
+      {asesores.length > 0 && (
+        <FlatList
+          data={asesores}
+          keyExtractor={(item) => item.id_asesor.toString()}
+          renderItem={({ item }) => (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, marginVertical: 8 }}>
+              <Text>{item.nombre}</Text>
+              <Button title="Agendar" onPress={() => {}} />
+            </View>
+          )}
+        />
+      )}
       <Button title="Agregar Evento" onPress={addEventToCalendar} />
     </View>
   );

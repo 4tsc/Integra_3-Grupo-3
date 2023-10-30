@@ -17,7 +17,8 @@ CREATE TABLE asesor (
     pass VARCHAR(50) NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     correo VARCHAR(100) NOT NULL,
-    area VARCHAR(100) NOT NULL
+    area VARCHAR(100) NOT NULL,
+    oficina VARCHAR(50) NOT NULL
 );
 
 -- Crear la tabla "horas"
@@ -28,8 +29,8 @@ CREATE TABLE horas (
     fecha DATE NOT NULL,
     id_usuario INT,
     id_asesor INT,
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id),
-    FOREIGN KEY (id_asesor) REFERENCES asesor(id)
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
+    FOREIGN KEY (id_asesor) REFERENCES asesor(id_asesor)
 );
 
 -- Registros de prueba para la tabla "asesor"

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, TextInput, Image, StatusBar } from 'react-native';
 import { styles_log } from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
+import * as Crypto from 'expo-crypto';
 
 const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
   const [text, setText] = useState('');
@@ -20,6 +21,14 @@ const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
     };
 
     try {
+      const hashedPassword = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        text2
+      );
+
+      // Usar la contraseña encriptada en lugar de la original
+      data.contraseña = hashedPassword;
+
       const response = await fetch('http://192.168.0.5:8080/auth', {
         method: 'POST',
         headers: {
