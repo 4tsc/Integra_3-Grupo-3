@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Alert, TextInput } from 'react-native';
 import DatePicker from '@react-native-community/datetimepicker';
-import TimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import * as Calendar from 'expo-calendar';
 import axios from 'axios';
-import { styles_Horas } from '../styles/styles';
+import { useEventContext } from '../EventContext';
 
 const AgendarScreen = () => {
+  const { state, dispatch } = useEventContext();
   const [calendars, setCalendars] = useState([]);
   const [selectedCalendarId, setSelectedCalendarId] = useState(null);
   const [eventDate, setEventDate] = useState(null);
@@ -54,8 +54,8 @@ const AgendarScreen = () => {
         const maxEndTime = new Date(selectedDateTime.getTime() + 30 * 60 * 1000);
 
         if (
-          selectedDateTime.getDay() !== 0 &&
-          selectedDateTime.getDay() !== 6 &&
+          selectedDateTime.getDay() >= 1 &&
+          selectedDateTime.getDay() <= 5 &&
           selectedDateTime.getHours() >= 14 &&
           selectedDateTime.getHours() < 16 &&
           maxEndTime <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
@@ -72,6 +72,9 @@ const AgendarScreen = () => {
           const calendarName = getCalendarNameById(selectedCalendarId);
           console.log('Evento creado en el calendario:', calendarName);
           console.log('Evento creado con éxito. ID del evento:', eventId);
+
+          // Agregar el evento al estado usando el contexto
+          dispatch({ type: 'ADD_EVENT', payload: event });
 
           try {
             const response = await axios.post('http://192.168.0.2:8080/enviar-correo', {
@@ -155,17 +158,17 @@ const AgendarScreen = () => {
           onChange={onDateChange}
           minimumDate={new Date()}
           maximumDate={new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)}
-        />)
-      }
+        />
+      )}
 
-      <Button title="Seleccionar Hora" onPress={showTimePickerModal}  />
+      <Button title="Seleccionar Hora" onPress={showTimePickerModal} />
       {showTimePicker && (
-          <View>
-            <Button title="14:00" onPress={() => selectSpecificTime(14, 0)} />
-            <Button title="14:30" onPress={() => selectSpecificTime(14, 30)} />
-            <Button title="15:00" onPress={() => selectSpecificTime(15, 0)} />
-            <Button title="15:30" onPress={() => selectSpecificTime(15, 30)} />
-          </View>
+        <View>
+          <Button title="14:00" onPress={() => selectSpecificTime(14, 0)} />
+          <Button title="14:30" onPress={() => selectSpecificTime(14, 30)} />
+          <Button title="15:00" onPress={() => selectSpecificTime(15, 0)} />
+          <Button title="15:30" onPress={() => selectSpecificTime(15, 30)} />
+        </View>
       )}
 
       <Button title="Obtener Calendarios" onPress={getCalendars} />
