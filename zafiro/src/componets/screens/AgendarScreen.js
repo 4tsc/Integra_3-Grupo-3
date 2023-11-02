@@ -74,7 +74,7 @@ const AgendarScreen = () => {
           console.log('Evento creado con éxito. ID del evento:', eventId);
 
           try {
-            const response = await axios.post('http://192.168.0.2:3000/enviar-correo', {
+            const response = await axios.post('http://192.168.0.2:8080/enviar-correo', {
               motivoConsulta,
               modoReunion: selectedModoReunion, // Agregar el modo de reunión seleccionado
             });
