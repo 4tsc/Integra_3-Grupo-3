@@ -8,6 +8,7 @@ import axios from 'axios';
 import { styles_Horas } from '../styles/styles';
 
 const AgendarScreen = () => {
+  const [selectedAsesor, setSelectedAsesor] = useState(null);
   const [asesores, setAsesores] = useState([]);
   const [calendars, setCalendars] = useState([]);
   const [selectedCalendarId, setSelectedCalendarId] = useState(null);
@@ -73,12 +74,12 @@ const AgendarScreen = () => {
           maxEndTime <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
         ) {
           const event = {
-            title: 'Mi Evento',
+            title: 'Asesoría con ' + selectedAsesor, // Concatenar el nombre del asesor al título
             startDate: selectedDateTime,
             endDate: maxEndTime,
             timeZone: 'America/Santiago',
-            modoReunion: selectedModoReunion, // Agregar el modo de reunión seleccionado
-          };
+            modoReunion: selectedModoReunion,
+          };          
 
           const eventId = await Calendar.createEventAsync(selectedCalendarId, event);
           const calendarName = getCalendarNameById(selectedCalendarId);
@@ -112,10 +113,14 @@ const AgendarScreen = () => {
 
   const obtenerAsesores = async () => {
     try {
-      const response = await axios.post('http://tu-servidor/obtener-asesores', {
+      console.log('Obtener asesores se llamó.'); // Agrega esta línea
+      console.log('Motivo de consulta a enviar:', motivoConsulta);
+      const response = await axios.post('http://192.168.0.5:8080/obtener-asesores', {
         motivoConsulta,
       });
   
+      console.log('Respuesta del servidor:', response.data);
+
       if (response.status === 200) {
         // Manejar la respuesta exitosa aquí
         const asesoresObtenidos = response.data.map((asesor) => ({
@@ -207,11 +212,6 @@ const AgendarScreen = () => {
       )}
 
       <Button title="Obtener Calendarios" onPress={getCalendars} />
-      <Text>Motivo de Consulta:</Text>
-      <TextInput
-        placeholder="Escribe el motivo de consulta"
-        onChangeText={(text) => setMotivoConsulta(text)}
-      />
 
       <Text>Modo de Reunión:</Text>
       <Picker
@@ -225,7 +225,10 @@ const AgendarScreen = () => {
       <Text>Motivo de Consulta:</Text>
       <Picker
         selectedValue={motivoConsulta}
-        onValueChange={(value) => setMotivoConsulta(value)}
+        onValueChange={(value) => {
+          console.log('Motivo de consulta seleccionado:', value); // Agrega este console.log
+          setMotivoConsulta(value);
+        }}
       >
         {motivoConsultaOptions.map((option) => (
           <Picker.Item key={option} label={option} value={option} />
@@ -246,7 +249,7 @@ const AgendarScreen = () => {
           renderItem={({ item }) => (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, marginVertical: 8 }}>
               <Text>{item.nombre}</Text>
-              <Button title="Agendar" onPress={() => {}} />
+              <Button title="Elegir" onPress={() => setSelectedAsesor(item.nombre)} />
             </View>
           )}
         />
