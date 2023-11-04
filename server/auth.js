@@ -17,17 +17,17 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   database: 'zafiro',
-  password: '',
+  password: '1234',//eliminar esto si no estas en pc de ulloa xD
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
 //Constantes para Correos
-const nombreAsesor = 'Juanin Juan Jarris';
-const nombreDocente = 'john jonah jameson';
-const fecha = '30/02/21';
-const hora = '14:00';
-const Asunto = 'Insertar Asunto';
+const nombreAsesor = 'Juanin Juan Jarris';//recibir de la app/BD
+const nombreDocente = 'john jonah jameson';//recibir de la app/BD
+const fecha = '30/02/21';//recibir de la app/BD
+const hora = '14:00';//recibir de la app/BD
+const Asunto = 'Insertar Asunto';//recibir de la app/BD
 const CorreoAsesor = 'c.a.ulloa.vera@gmail.com';
 const CorreoDocente = 'carlos.ulloa2020@alu.uct.cl';
 
@@ -125,28 +125,24 @@ app.listen(port, () => {
   console.log(`Servidor en ejecución en el puerto ${port}`);
 });
 
-app.post('/obtener-asesores', (req, res) => {
+app.post('/obtener-asesores', async (req, res) => {
   const motivoConsulta = req.body.motivoConsulta; // Obtén el motivo de consulta desde la solicitud
+  console.log('Motivo de consulta recibido:', motivoConsulta);
 
-  // Realiza una consulta SQL para obtener los asesores según el motivo de consulta
-  const sql = `SELECT id_asesor, nombre FROM asesor WHERE area LIKE '%${motivoConsulta}%';`;
+  try {
+    const connection = await pool.getConnection();
 
-  pool.getConnection((err, connection) => {
-    if (err) {
-      console.error('Error al obtener una conexión de la piscina: ' + err);
-      return res.status(500).json({ error: 'Error en la base de datos' });
-    }
+    // La conexión a la base de datos se obtuvo correctamente
+    console.log('Conexión a la base de datos exitosa');
 
-    connection.query(sql, (error, rows) => {
-      connection.release(); // Libera la conexión de la piscina
+    const sql = `SELECT id_asesor, nombre FROM asesor WHERE area LIKE '%${motivoConsulta}%';`;
 
-      if (error) {
-        console.error('Error al ejecutar la consulta SQL: ' + error.message);
-        return res.status(500).json({ error: 'Error en la base de datos' });
-      }
+    const [rows] = await connection.query(sql);
 
-      // Devuelve los resultados de la consulta en formato JSON
-      res.json(rows);
-    });
-  });
+    // Devuelve los resultados de la consulta en formato JSON
+    res.json(rows);
+  } catch (error) {
+    console.error('Error al obtener asesores:', error);
+    res.status(500).json({ error: 'Error en la base de datos' });
+  }
 });

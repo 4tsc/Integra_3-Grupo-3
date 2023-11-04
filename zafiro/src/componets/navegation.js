@@ -11,7 +11,7 @@ import Modal from "react-native-modal";
 import Log_in from "./screens/LoginScreen.js";
 import Agendar from "./screens/AgendarScreen.js";
 import PrincipalScreen from "./screens/PrincipalScreen.js";
-import EventosScreen from "./screens/EventosScreen.js";
+import EliminarScreen from "./screens/EliminarScreen.js";
 import { ChatScreen } from "./screens/ChatScreen.js";
 
 const Stack = createStackNavigator();
@@ -61,13 +61,13 @@ const Navegador = () => {
           component={Agendar}
         />
         <Stack.Screen
-          name="EventosScreen"
+          name="EliminarScreen"
           options={{
             title: "Eliminar Hora",
             headerStyle: { backgroundColor: "blue" },
             headerTintColor: "white",
           }}
-          component={EventosScreen}
+          component={EliminarScreen}
         />
       </Stack.Navigator>
 
