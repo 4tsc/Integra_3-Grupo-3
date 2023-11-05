@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Button,
+  Image,
 } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Modal from "react-native-modal";
@@ -13,9 +14,9 @@ import Agendar from "./screens/AgendarScreen.js";
 import PrincipalScreen from "./screens/PrincipalScreen.js";
 import EliminarScreen from "./screens/EliminarScreen.js";
 import { ChatScreen } from "./screens/ChatScreen.js";
+import Swiper from 'react-native-swiper';
 
 const Stack = createStackNavigator();
-
 
 const Navegador = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -26,14 +27,37 @@ const Navegador = () => {
   };
 
   const handleLogin = () => {
-    // Lógica de inicio de sesión aquí
-
-    // Después de una autenticación exitosa, llama a la función setIsLoggedIn para actualizar el estado
     setIsLoggedIn(true);
   };
 
   return (
     <View style={{ flex: 1 }}>
+      <Swiper
+        style={{ height: '70%' }} // Establece la altura del Swiper
+        loop={false}
+        autoplay={true}
+        autoplayTimeout={5}
+      >
+        <View style={styles.slide}>
+          <Image
+            source={require("../componets/images/UCT_logo.png")}
+            style={styles.image}
+          />
+        </View>
+        <View style={styles.slide}>
+          <Image
+            source={require("../componets/images/prueba_2.jpg")}
+            style={styles.image}
+          />
+        </View>
+        <View style={styles.slide}>
+          <Image
+            source={require("../componets/images/prueba_3.jpg")}
+            style={styles.image}
+          />
+        </View>
+      </Swiper>
+
       <Stack.Navigator initialRouteName="LogInScreen">
         <Stack.Screen
           name="LogInScreen"
@@ -69,27 +93,42 @@ const Navegador = () => {
           }}
           component={EliminarScreen}
         />
+        <Stack.Screen
+          name="ChatScreen"
+          options={{
+            title: "Chat",
+            headerStyle: { backgroundColor: "blue" },
+            headerTintColor: "white",
+          }}
+          component={ChatScreen}
+        />
       </Stack.Navigator>
 
-      {/* Botón de chat solo visible después de iniciar sesión */}
       {isLoggedIn && !isModalVisible && (
-          <TouchableOpacity
-            style={styles.floatingButton}
-            onPress={toggleModal}
-          >
-            <Text style={styles.buttonText}>Chat</Text>
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.floatingButton} onPress={toggleModal}>
+          <Text style={styles.buttonText}>Chat</Text>
+        </TouchableOpacity>
       )}
+
       <Modal isVisible={isModalVisible}>
         <Button title="Cerrar" onPress={toggleModal} />
         <ChatScreen />
       </Modal>
-
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  slide: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  image: {
+    width: '100%', // Establece el ancho de la imagen
+    height: '100%', // Establece la altura de la imagen
+    resizeMode: "contain", // Ajusta la imagen sin distorsionarla
+  },
   floatingButton: {
     position: "absolute",
     bottom: 60,
@@ -108,26 +147,3 @@ const styles = StyleSheet.create({
 });
 
 export default Navegador;
-
-// import React from 'react';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createStackNavigator } from '@react-navigation/stack';
-// import Log_in from './screens/LoginScreen.js';
-// import Agendar from './screens/AgendarScreen.js';
-// import PrincipalScreen from './screens/PrincipalScreen.js';
-
-// const Stack = createStackNavigator();
-
-// const Navegador = () => {
-//   return (
-//     <NavigationContainer>
-//       <Stack.Navigator initialRouteName="PrincipalScreen">
-//         <Stack.Screen name="PrincipalScreen" options={{title: 'Menu',headerStyle: {backgroundColor: 'blue',},headerTintColor: 'white',}}component={PrincipalScreen} />
-//         <Stack.Screen name="LogInScreen" options={{title: 'Inicio de sesión',headerStyle: {backgroundColor: 'blue',},headerTintColor: 'white',}}component={Log_in} />
-//         <Stack.Screen name="Agendar" options={{title: 'Agendar Hora',headerStyle: {backgroundColor: 'blue',},headerTintColor: 'white',}} component={Agendar} />
-//       </Stack.Navigator>
-//     </NavigationContainer>
-//   );
-// };
-
-// export default Navegador;
