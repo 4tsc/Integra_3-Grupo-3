@@ -74,13 +74,13 @@ app.get('/users/:id', async (req, res) => {
 // Actualizar información de usuario por ID
 app.put('/users/:id', async (req, res) => {
   const userId = req.params.id;
-  const { nombre, correo, contraseña } = req.body;
+  const { nombre, correo } = req.body;
 
   try {
     const connection = await pool.getConnection();
     const [result] = await connection.execute(
-      'UPDATE usuario SET nombre = ?, correo = ?, pass = ? WHERE id_usuario = ?',
-      [nombre, correo, contraseña, userId]
+      'UPDATE usuario SET nombre = ?, correo = ? WHERE id_usuario = ?',
+      [nombre, correo, userId]
     );
     connection.release();
 
