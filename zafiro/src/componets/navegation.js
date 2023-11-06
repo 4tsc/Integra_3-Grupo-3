@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -15,12 +15,14 @@ import PrincipalScreen from "./screens/PrincipalScreen.js";
 import EliminarScreen from "./screens/EliminarScreen.js";
 import { ChatScreen } from "./screens/ChatScreen.js";
 import Swiper from 'react-native-swiper';
+import { FlatList } from "react-native-web";
 
 const Stack = createStackNavigator();
 
 const Navegador = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const swiperRef = useRef(null); // Referencia al Swiper
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -30,13 +32,31 @@ const Navegador = () => {
     setIsLoggedIn(true);
   };
 
+  const [autoPlayInterval, setAutoPlayInterval] = useState(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (swiperRef.current) {
+        swiperRef.current.scrollBy(1);
+      }
+    }, 7000);
+
+    setAutoPlayInterval(interval);
+
+    return () => {
+      clearInterval(autoPlayInterval);
+    };
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
       <Swiper
-        style={{ height: '70%' }} // Establece la altura del Swiper
-        loop={false}
-        autoplay={true}
-        autoplayTimeout={5}
+        ref={swiperRef}
+        style={{ width: '100', height: '100', alignItems: 'center' }} // Establece la altura del Swiper
+        //loop={true}
+        autoplay={false}
+        autoplayTimeout={7}
+        transitionStyle="fade" 
       >
         <View style={styles.slide}>
           <Image
@@ -58,7 +78,8 @@ const Navegador = () => {
         </View>
       </Swiper>
 
-      <Stack.Navigator initialRouteName="LogInScreen">
+     
+        <Stack.Navigator initialRouteName="LogInScreen">
         <Stack.Screen
           name="LogInScreen"
           options={{
@@ -103,6 +124,8 @@ const Navegador = () => {
           component={ChatScreen}
         />
       </Stack.Navigator>
+      
+      
 
       {isLoggedIn && !isModalVisible && (
         <TouchableOpacity style={styles.floatingButton} onPress={toggleModal}>
