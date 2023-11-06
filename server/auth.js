@@ -22,21 +22,17 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
 });
-//Constantes para Correos
-const nombreAsesor = 'Juanin Juan Jarris';//recibir de la app/BD
-const nombreDocente = 'john jonah jameson';//recibir de la app/BD
-const fecha = '30/02/21';//recibir de la app/BD
-const hora = '14:00';//recibir de la app/BD
-const Asunto = 'Insertar Asunto';//recibir de la app/BD
-const CorreoAsesor = 'c.a.ulloa.vera@gmail.com';
-const CorreoDocente = 'carlos.ulloa2020@alu.uct.cl';
 
-//HTML de correos
-const HTMLAsesor = `
+app.post('/enviar-correo', (req, res) => {
+  // Extrae los datos necesarios del cuerpo de la solicitud
+  const { especialidad, nombreAsesor,nombreDocente,fecha,hora,correoDocente,correoAsesor } = req.body;
+  console.log('Especialidad recibida en el servidor:', especialidad);
+  const HTMLAsesor = `
     <html>
     <body>
         <p>Estimado ${nombreAsesor},</p>
-        <p>Le informamos que el Docente <b>${nombreDocente}</b> agendó una hora de consulta para el día ${fecha} a las ${hora} hrs con asunto: ${Asunto}.
+        <p>Le informamos que el Docente <b>${nombreDocente}</b> agendó una hora de consulta para el día ${fecha} 
+        a las ${hora} hrs buscando ayuda en la especialidad: ${especialidad}.
         </p>
         <p>Atentamente,<br>
         <b>Una persona Equis</b><br>
@@ -51,35 +47,37 @@ const HTMLAsesor = `
     </body>
     </html>
 `;
+
 const HTMLDocente = `
-    <html>
-    <body>
-        <p>Estimado <b>${nombreDocente}</b>,</p>
-        <p>Le informamos que su reserva de hora para la Consulta con el Asesor <b>${nombreAsesor}</b> se agendó correctamente para el día ${fecha} a las ${hora} hrs sobre el asunto: ${Asunto}.
-        </p>
-        <p>Atentamente,<br>
-        <b>Una persona Equis</b><br>
-        Universidad Católica de Temuco<br>
-        Campus San Juan Pablo II<br>
-        Rudecindo Ortega 02950<br>
-        Temuco - Chile <br>
-        Fono: +56 452 205 453<br>
-        https://dte.uct.cl/ <br>
-        <img src="https://recursos.uct.cl/wp-content/uploads/2016/04/UCT_logo.png" alt="Descripción" width="200" height="100">
-        </p>
-    </body>
-    </html>
+<html>
+<body>
+    <p>Estimado <b>${nombreDocente}</b>,</p>
+    <p>Le informamos que su reserva de hora para la Consulta con el Asesor <b>${nombreAsesor}</b> con especialidad: 
+    <b>${especialidad}</b> se agendó correctamente para el día <b>${fecha}</b> a las ${hora} hrs.
+    </p>
+    <p>Atentamente,<br>
+    <b>Una persona Equis</b><br>
+    Universidad Católica de Temuco<br>
+    Campus San Juan Pablo II<br>
+    Rudecindo Ortega 02950<br>
+    Temuco - Chile <br>
+    Fono: +56 452 205 453<br>
+    https://dte.uct.cl/ <br>
+    <img src="https://recursos.uct.cl/wp-content/uploads/2016/04/UCT_logo.png" alt="Descripción" width="200" height="100">
+    </p>
+</body>
+</html>
 `;
-app.post('/enviar-correo', (req, res) => {
+
   const msg1 = {
-    to: CorreoAsesor,
+    to: correoAsesor,
     from: 'carlos.ulloa2020@alu.uct.cl',
     subject: 'Se ha reservado una Consulta de Asesoría',
     html: HTMLAsesor,
   };
 
   const msg2 = {
-    to: CorreoDocente,
+    to: correoDocente,
     from: 'carlos.ulloa2020@alu.uct.cl',
     subject: `Se reservó una Consulta con ${nombreAsesor} para el ${fecha} a las ${hora}`,
     html: HTMLDocente,
@@ -95,6 +93,7 @@ app.post('/enviar-correo', (req, res) => {
       res.status(500).send('Error al enviar los correos');
     });
 });
+
 
 // Endpoint para autenticación
 app.post('/auth', async (req, res) => {
