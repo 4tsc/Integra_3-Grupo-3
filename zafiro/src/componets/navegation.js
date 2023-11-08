@@ -39,7 +39,7 @@ const Navegador = () => {
       if (swiperRef.current) {
         swiperRef.current.scrollBy(1);
       }
-    }, 7000);
+    }, 5000);
 
     setAutoPlayInterval(interval);
 
@@ -50,33 +50,8 @@ const Navegador = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Swiper
-        ref={swiperRef}
-        style={{ width: '100', height: '100', alignItems: 'center' }} // Establece la altura del Swiper
-        //loop={true}
-        autoplay={false}
-        autoplayTimeout={7}
-        transitionStyle="fade" 
-      >
-        <View style={styles.slide}>
-          <Image
-            source={require("../componets/images/UCT_logo.png")}
-            style={styles.image}
-          />
-        </View>
-        <View style={styles.slide}>
-          <Image
-            source={require("../componets/images/prueba_2.jpg")}
-            style={styles.image}
-          />
-        </View>
-        <View style={styles.slide}>
-          <Image
-            source={require("../componets/images/prueba_3.jpg")}
-            style={styles.image}
-          />
-        </View>
-      </Swiper>
+      
+      
 
      
         <Stack.Navigator initialRouteName="LogInScreen">
@@ -142,6 +117,22 @@ const Navegador = () => {
 };
 
 const styles = StyleSheet.create({
+  ot: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: 4,
+    width: 8,
+    height: 8,
+    margin: 3,
+  },
+  activeDot: {
+    backgroundColor: 'white',
+    borderRadius: 4,
+    width: 8,
+    height: 8,
+    margin: 3,
+  },
   slide: {
     flex: 1,
     justifyContent: "center",

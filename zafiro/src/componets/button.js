@@ -1,35 +1,39 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Image, FlatList, Linking, TouchableOpacity, Text } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Image, FlatList, Linking, ScrollView, Dimensions, TouchableOpacity, Text, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles_menu } from './styles/styles.js';
-import Swiper from 'react-native-swiper';
-
-
 
 const AppButton = () => {
   const navigation = useNavigation();
-  const swiperRef = useRef(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const scrollViewRef = useRef();
 
-  const [autoPlayInterval, setAutoPlayInterval] = useState(null);
+  // Function to scroll to the next image
+  const scrollToNextImage = () => {
+    const newImageIndex = (currentImageIndex + 1) % carouselItems.length;
+    setCurrentImageIndex(newImageIndex);
+    const offsetX = newImageIndex * windowWidth;
+    scrollViewRef.current.scrollTo({ x: offsetX, animated: true });
+  };
 
+  // Use useEffect to set up the automatic scrolling
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (swiperRef.current) {
-        swiperRef.current.scrollBy(1);
-      }
-    }, 5000);
+    const scrollInterval = setInterval(() => {
+      scrollToNextImage();
+    }, 5000); // Change the interval (in milliseconds) as desired
 
-    setAutoPlayInterval(interval);
-
+    // Clear the interval when the component unmounts
     return () => {
-      clearInterval(autoPlayInterval);
+      clearInterval(scrollInterval);
     };
-  }, []);
+  }, [currentImageIndex]);
 
-  const handleImagePress = (screenName) => { // Define una función para manejar el evento de presionar la imagen.
-    const linkMap = { // Crea un mapeo de nombres de pantalla a enlaces o rutas.
-      'Agendar': 'Agendar', // Cuando se presiona 'Agendar', se navegará a la pantalla 'Agendar'
-      'Recursos': 'https://www.google.com', // Cuando se presiona 'Recursos', se abrirá un enlace en el navegador.
+
+
+  const handleImagePress = (screenName) => {
+    const linkMap = {
+      'Agendar': 'Agendar',
+      'Recursos': 'https://www.google.com',
       'DTE': 'https://dte.uct.cl',
       'Kintun': 'https://biblioteca.uct.cl',
       'Inkatun': 'https://inkatun.uct.cl',
@@ -38,34 +42,58 @@ const AppButton = () => {
       'Formacion Docente': 'https://dte.uct.cl/formaciondocente2023/',
     };
 
-    const link = linkMap[screenName]; // Obtiene el enlace correspondiente al nombre de pantalla seleccionado.
+    const link = linkMap[screenName];
 
-    if (link) { // Si hay un enlace disponible
-      if (typeof link === 'string') { // Si el enlace es una cadena (URL).
-        if (link === 'Agendar') { // Si el enlace es 'Agendar'.
-          // Redirigir a la pantalla AgendarScreen
+    if (link) {
+      if (typeof link === 'string') {
+        if (link === 'Agendar') {
           navigation.navigate(link);
         } else {
-          // Abrir enlace en el navegador
           Linking.openURL(link);
         }
       }
     }
   };
 
-  const menuItems = [ // Define una lista de elementos de menú con títulos, imágenes y nombres de pantalla.
+  const menuItems = [
     { title: 'Agendar Asesoria', imageSource: require('../componets/images/asesoria.png'), screenName: 'Agendar' },
     { title: 'Recursos', imageSource: require('../componets/images/recursos.png'), screenName: 'Recursos' },
     { title: 'DTE', imageSource: require('../componets/images/Logo_UCT.png'), screenName: 'DTE' },
     { title: 'Kintun', imageSource: require('../componets/images/bandera.png'), screenName: 'Kintun' },
-    { title: 'Inkatun',imageSource: require('../componets/images/inkatun.png'), screenName: 'Inkatun' },
+    { title: 'Inkatun', imageSource: require('../componets/images/inkatun.png'), screenName: 'Inkatun' },
     { title: 'Academicos', imageSource: require('../componets/images/academico.png'), screenName: 'Academicos' },
     { title: 'Directorios Salas', imageSource: require('../componets/images/sala-de-espera.png'), screenName: 'Directorios Salas' },
     { title: 'Formacion Docente', imageSource: require('../componets/images/formacion.png'), screenName: 'Formacion Docente' },
   ];
 
-  const renderItem = ({ item }) => ( // Define una función para representar cada elemento del menú.
-    <TouchableOpacity onPress={() => handleImagePress(item.screenName)}> 
+  const CarouselItem = ({ item }) => (
+    <View>
+      <Image
+        source={item.imageSource}
+        style={{
+          width: windowWidth,
+          height: 100,
+          resizeMode: 'stretch',
+        }}
+      />
+    </View>
+  );
+
+  const carouselItems = [
+    { imageSource: require('../componets/images/UCT_logo.png') },
+    { imageSource: require('../componets/images/prueba_2.jpg') },
+    { imageSource: require('../componets/images/prueba_3.jpg') },
+  ];
+
+  const windowWidth = Dimensions.get('window').width;
+
+  const handleScroll = (event) => {
+    const newImageIndex = Math.round(event.nativeEvent.contentOffset.x / windowWidth);
+    setCurrentImageIndex(newImageIndex);
+  };
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => handleImagePress(item.screenName)}>
       <View style={styles_menu.circularItem}>
         <View style={styles_menu.circularImageContainer}>
           <Image source={item.imageSource} style={styles_menu.circularImage} />
@@ -76,64 +104,28 @@ const AppButton = () => {
   );
 
   return (
-    <FlatList
-      data={menuItems}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.title}
-      numColumns={2}
-      columnWrapperStyle={styles_menu.row}
-    />
+    <View>
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        onScroll={handleScroll}
+        showsHorizontalScrollIndicator={false}
+      >
+        {carouselItems.map((item, index) => (
+          <CarouselItem key={index} item={item} />
+        ))}
+      </ScrollView>
+
+      <FlatList
+        data={menuItems}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.title}
+        numColumns={2}
+        columnWrapperStyle={styles_menu.row}
+      />
+    </View>
   );
-
- // return (
-//   <View style={{ flex: 1 }}>
-//     <Swiper
-//       ref={swiperRef} // Asocia la referencia a Swiper
-//       loop={false}
-//       autoplay={true}
-//       autoplayTimeout={5}
-//     >
-//       <Image source={require('../componets/images/UCT_logo.png')} style={{ flex: 1 }} />
-//       <Image source={require('../componets/images/prueba_2.jpg')} style={{ flex: 1 }} />
-//       <Image source={require('../componets/images/prueba_3.jpg')} style{{ flex: 1 }} />
-//     </Swiper>
-//     <FlatList
-//       data={menuItems}
-//       renderItem={renderItem}
-//       keyExtractor={(item) => item.title}
-//       numColumns={2}
-//       columnWrapperStyle={styles_menu.row}
-//     />
-//   </View>
-// );
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// return (
-//   <View style={{ flex: 1 }}>
-//     <Swiper
-//       ref={swiperRef}
-//       loop={false}
-//       autoplay={true}
-//       autoplayTimeout={5}
-//       style={{ width: '100%', height: 200 }} // Establece el ancho y la altura
-//     >
-//       <Image source={require('../componets/images/UCT_logo.png')} style={{ flex: 1 }} />
-//       <Image source={require('../componets/images/prueba_2.jpg')} style={{ flex: 1 }} />
-//       <Image source={require('../componets/images/prueba_3.jpg')} style={{ flex: 1 }} />
-//     </Swiper>
-//     <FlatList
-//       data={menuItems}
-//       renderItem={renderItem}
-//       keyExtractor={(item) => item.title}
-//       numColumns={2}
-//       columnWrapperStyle={styles_menu.row}
-//     />
-//   </View>
-// );
-
-
 };
-
-
 
 export default AppButton;
