@@ -130,8 +130,8 @@ const styles_menu = StyleSheet.create({
     margin: 20,
   },
   circularImageContainer: {
-    width: 100,            // Establece el ancho del contenedor circular en 100 unidades (píxeles o algún otro valor de medida).
-    height: 100,          // Establece la altura del contenedor circular en 100 unidades (píxeles u otra medida).
+    width: 80,            // Establece el ancho del contenedor circular en 100 unidades (píxeles o algún otro valor de medida).
+    height: 80,          // Establece la altura del contenedor circular en 100 unidades (píxeles u otra medida).
     borderRadius: 50,     // Define un radio de borde de 50 unidades, lo que crea un contenedor circular.
     overflow: 'hidden',   // Oculta cualquier contenido que se desborde del contenedor circular.
     marginBottom: 10,     // Agrega un espacio en la parte inferior del contenedor circular de 10 unidades
