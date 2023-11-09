@@ -127,7 +127,7 @@ const styles_Agendar = StyleSheet.create({
 const styles_menu = StyleSheet.create({
   circularItem: {
     alignItems: 'center',
-    margin: 20,
+    margin: 10,
   },
   circularImageContainer: {
     width: 80,            // Establece el ancho del contenedor circular en 100 unidades (píxeles o algún otro valor de medida).

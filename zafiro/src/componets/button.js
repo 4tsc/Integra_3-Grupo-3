@@ -93,14 +93,16 @@ const AppButton = () => {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handleImagePress(item.screenName)}>
-      <View style={styles_menu.circularItem}>
-        <View style={styles_menu.circularImageContainer}>
-          <Image source={item.imageSource} style={styles_menu.circularImage} />
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+      <TouchableOpacity onPress={() => handleImagePress(item.screenName)}>
+        <View style={styles_menu.circularItem}>
+          <View style={styles_menu.circularImageContainer}>
+            <Image source={item.imageSource} style={styles_menu.circularImage} />
+          </View>
+          <Text style={styles_menu.itemTitle}>{item.title}</Text>
         </View>
-        <Text style={styles_menu.itemTitle}>{item.title}</Text>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </ScrollView>
   );
 
   return (
