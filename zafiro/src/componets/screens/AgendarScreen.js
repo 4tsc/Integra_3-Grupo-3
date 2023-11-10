@@ -7,7 +7,7 @@ import * as Calendar from 'expo-calendar';
 import axios from 'axios';
 import { styles_Horas } from '../styles/styles';
 
-const AgendarScreen = () => {
+const AgendarScreen = ({ userID }) => {
   const [selectedAsesor, setSelectedAsesor] = useState(null);
   const [asesores, setAsesores] = useState([]);
   const [calendars, setCalendars] = useState([]);
@@ -62,10 +62,10 @@ const AgendarScreen = () => {
         const selectedDateTime = new Date(eventDate);
         selectedDateTime.setHours(eventTime.getHours());
         selectedDateTime.setMinutes(eventTime.getMinutes());
-
+  
         const now = new Date();
         const maxEndTime = new Date(selectedDateTime.getTime() + 30 * 60 * 1000);
-
+  
         if (
           selectedDateTime.getDay() !== 0 &&
           selectedDateTime.getDay() !== 6 &&
@@ -74,26 +74,42 @@ const AgendarScreen = () => {
           maxEndTime <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
         ) {
           const event = {
-            title: 'Asesoría con ' + selectedAsesor, // Concatenar el nombre del asesor al título
+            title: 'Asesoría con ' + selectedAsesor,
             startDate: selectedDateTime,
             endDate: maxEndTime,
             timeZone: 'America/Santiago',
             modoReunion: selectedModoReunion,
           };          
-
+  
           const eventId = await Calendar.createEventAsync(selectedCalendarId, event);
           const calendarName = getCalendarNameById(selectedCalendarId);
           console.log('Evento creado en el calendario:', calendarName);
           console.log('Evento creado con éxito. ID del evento:', eventId);
-
+  
+          // Nueva solicitud HTTP para crear una hora en la base de datos
           try {
-            const response = await axios.post('http://192.168.0.2:3000/enviar-correo', {
-              motivoConsulta,
-              modoReunion: selectedModoReunion, // Agregar el modo de reunión seleccionado
+            const response = await axios.post('http://192.168.0.5:8080/crear-hora', {
+              idUsuario: userID, // Ajustar según sea necesario
+              idAsesor: selectedAsesor.id_asesor, // Ajustar según sea necesario
+              fecha: eventDate,
+              hora: eventTime.toLocaleTimeString(),
+              descripcion: motivoConsulta,
             });
-            console.log('Solicitud al servidor exitosa:', response.data);
+            console.log('Solicitud al servidor para crear hora exitosa:', response.data);
           } catch (error) {
-            console.error('Error al realizar la solicitud al servidor:', error);
+            console.error('Error al realizar la solicitud para crear hora:', error);
+            Alert.alert('Error', 'No se pudo crear la hora en la base de datos.');
+          }
+  
+          // Solicitud HTTP para enviar correo electrónico
+          try {
+            const response = await axios.post('http://192.168.0.5:8080/enviar-correo', {
+              motivoConsulta,
+              modoReunion: selectedModoReunion,
+            });
+            console.log('Solicitud al servidor para enviar correo electrónico exitosa:', response.data);
+          } catch (error) {
+            console.error('Error al realizar la solicitud para enviar correo electrónico:', error);
             Alert.alert('Error', 'No se pudo enviar el correo electrónico.');
           }
         } else {

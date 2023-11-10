@@ -16,20 +16,27 @@ import { ChatScreen } from "./screens/ChatScreen.js";
 
 const Stack = createStackNavigator();
 
-
 const Navegador = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const handleLogin = () => {
+  const handleLogin = (userId) => {
     // Lógica de inicio de sesión aquí
 
     // Después de una autenticación exitosa, llama a la función setIsLoggedIn para actualizar el estado
     setIsLoggedIn(true);
+    setUserId(userId); // Almacena el ID del usuario en el estado
+  };
+
+  const handleLogout = () => {
+    // Lógica de cierre de sesión aquí
+    setIsLoggedIn(false); // Restablece el estado de autenticación a no autenticado
+    setUserId(null); // Restablece el ID del usuario a null
   };
 
   return (
@@ -49,7 +56,7 @@ const Navegador = () => {
           name="PrincipalScreen"
           options={{ headerShown: false }}
         >
-          {() => <PrincipalScreen isLoggedIn={isLoggedIn} />}
+          {() => <PrincipalScreen isLoggedIn={isLoggedIn} userId={userId} onLogout={handleLogout} />}
         </Stack.Screen>
         <Stack.Screen
           name="Agendar"
@@ -71,20 +78,16 @@ const Navegador = () => {
         />
       </Stack.Navigator>
 
-      {/* Botón de chat solo visible después de iniciar sesión */}
-      {isLoggedIn && !isModalVisible && (
-          <TouchableOpacity
-            style={styles.floatingButton}
-            onPress={toggleModal}
-          >
-            <Text style={styles.buttonText}>Chat</Text>
-          </TouchableOpacity>
+      {/* Botón de chat solo visible después de iniciar sesión */
+      isLoggedIn && userId && !isModalVisible && (
+        <TouchableOpacity style={styles.floatingButton} onPress={toggleModal}>
+          <Text style={styles.buttonText}>Chat</Text>
+        </TouchableOpacity>
       )}
       <Modal isVisible={isModalVisible}>
         <Button title="Cerrar" onPress={toggleModal} />
         <ChatScreen />
       </Modal>
-
     </View>
   );
 };
@@ -108,6 +111,7 @@ const styles = StyleSheet.create({
 });
 
 export default Navegador;
+
 
 // import React from 'react';
 // import { NavigationContainer } from '@react-navigation/native';

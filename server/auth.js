@@ -22,17 +22,20 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
 });
-//Constantes para Correos
-const nombreAsesor = 'Juanin Juan Jarris';
-const nombreDocente = 'john jonah jameson';
-const fecha = '30/02/21';
-const hora = '14:00';
-const Asunto = 'Insertar Asunto';
-const CorreoAsesor = 'c.a.ulloa.vera@gmail.com';
-const CorreoDocente = 'carlos.ulloa2020@alu.uct.cl';
+
+app.post('/enviar-correo', (req, res) => {
+
+  //Constantes para Correos
+  const nombreAsesor = 'Juanin Juan Jarris';
+  const nombreDocente = 'john jonah jameson';
+  const fecha = '30/02/21';
+  const hora = '14:00';
+  const Asunto = 'Insertar Asunto';
+  const CorreoAsesor = 'c.a.ulloa.vera@gmail.com';
+  const CorreoDocente = 'carlos.ulloa2020@alu.uct.cl';
 
 //HTML de correos
-const HTMLAsesor = `
+  const HTMLAsesor = `
     <html>
     <body>
         <p>Estimado ${nombreAsesor},</p>
@@ -50,8 +53,8 @@ const HTMLAsesor = `
         </p>
     </body>
     </html>
-`;
-const HTMLDocente = `
+  `;
+  const HTMLDocente = `
     <html>
     <body>
         <p>Estimado <b>${nombreDocente}</b>,</p>
@@ -69,8 +72,8 @@ const HTMLDocente = `
         </p>
     </body>
     </html>
-`;
-app.post('/enviar-correo', (req, res) => {
+  `;
+
   const msg1 = {
     to: CorreoAsesor,
     from: 'carlos.ulloa2020@alu.uct.cl',
@@ -106,11 +109,14 @@ app.post('/auth', async (req, res) => {
 
   try {
     const connection = await pool.getConnection();
-    const [rows] = await connection.execute('SELECT * FROM usuario WHERE correo = ? AND pass = ?', [correo, contraseña]);
+    const [rows] = await connection.execute('SELECT id_usuario FROM usuario WHERE correo = ? AND pass = ?', [correo, contraseña]);
+    connection.release();
 
     if (rows.length === 1) {
       // Autenticación exitosa
-      res.status(200).json({ mensaje: 'Autenticación exitosa' });
+      const userId = rows[0].id_usuario; // Obtiene el ID del usuario
+      console.log('ID de usuario obtenido:', userId); // Agrega esta línea para imprimir el ID
+      res.status(200).json({ id: userId }); // Incluye el ID en la respuesta
     } else {
       // Autenticación fallida
       res.status(401).json({ mensaje: 'Autenticación fallida' });
@@ -119,10 +125,6 @@ app.post('/auth', async (req, res) => {
     console.error('Error al autenticar:', error);
     res.status(500).json({ mensaje: 'Error interno del servidor' });
   }
-});
-
-app.listen(port, () => {
-  console.log(`Servidor en ejecución en el puerto ${port}`);
 });
 
 app.post('/obtener-asesores', async (req, res) => {
@@ -145,4 +147,86 @@ app.post('/obtener-asesores', async (req, res) => {
     console.error('Error al obtener asesores:', error);
     res.status(500).json({ error: 'Error en la base de datos' });
   }
+});
+
+app.post('/crear-hora', async (req, res) => {
+  const idUsuario = req.body.id; // Ajustar según sea necesario
+  const idAsesor = req.body.id_asesor;
+  const fecha = req.body.fecha;
+  const hora = req.body.hora;
+  const descripcion = req.body.descripcion; // Asumiendo que tienes un campo "descripcion" para la asesoría
+  const disponibilidad = 1; // Establecer el valor de disponibilidad
+
+  try {
+    const connection = await pool.getConnection();
+
+    // La conexión a la base de datos se obtuvo correctamente
+    console.log('Conexión a la base de datos exitosa');
+
+    const sql = `
+      INSERT INTO horas (id_usuario, id_asesor, fecha, hora, descripcion, disponibilidad)
+      VALUES (?, ?, ?, ?, ?, ?);
+    `;
+
+    await connection.query(sql, [idUsuario, idAsesor, fecha, hora, descripcion, disponibilidad]);
+
+    // Devuelve un mensaje de éxito en formato JSON
+    res.json({ mensaje: 'Hora creada con éxito' });
+  } catch (error) {
+    console.error('Error al crear hora:', error);
+    res.status(500).json({ error: 'Error en la base de datos' });
+  }
+});
+
+
+
+// Rutas protegidas que requieren el ID del usuario
+
+// Obtener información de usuario por ID
+app.get('/users/:id', async (req, res) => {
+  const userId = req.params.id;
+  console.log('ID del usuario recibido:', userId); // Agrega este log
+
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.execute('SELECT * FROM usuario WHERE id_usuario = ?', [userId]);
+    connection.release();
+
+    if (rows.length === 1) {
+      res.status(200).json(rows[0]);
+    } else {
+      res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al obtener el usuario:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+// Actualizar información de usuario por ID
+app.put('/users/:id', async (req, res) => {
+  const userId = req.params.id;
+  const { nombre, correo } = req.body;
+
+  try {
+    const connection = await pool.getConnection();
+    const [result] = await connection.execute(
+      'UPDATE usuario SET nombre = ?, correo = ? WHERE id_usuario = ?',
+      [nombre, correo, userId]
+    );
+    connection.release();
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ mensaje: 'Usuario actualizado exitosamente' });
+    } else {
+      res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al actualizar el usuario:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Servidor en ejecución en el puerto ${port}`);
 });
