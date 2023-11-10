@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, View, Image, FlatList, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles_menu } from './styles/styles.js';
+import PushNotifications from './notifications.js';
 
 const AppButton = () => {
   const navigation = useNavigation();
@@ -45,6 +46,7 @@ const AppButton = () => {
         color='#00BBE0'
         onPress={() => handlePress(item.screenName)}
       />
+      <PushNotifications />
     </View>
   );
 

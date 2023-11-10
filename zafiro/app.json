@@ -7,6 +7,12 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "notification": {
+      "icon": "./assets/icon.png",
+      "color": "#ffffff",
+      "androidMode": "collapse",
+      "iosDisplayInForeground": true
+    },  
     "splash": {
       "image": "./assets/Logo_UCT.png",
       "resizeMode": "contain",

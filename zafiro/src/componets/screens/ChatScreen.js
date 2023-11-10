@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
+import { WebView } from "react-native-webview";
 import { v4 as uuidv4 } from "uuid";
 
 const opciones = [
@@ -44,28 +45,20 @@ export function ChatScreen() {
         }, 1000); // Simula un retraso de 1 segundo antes de que el bot responda
     }, [handleOptionSelection]);
 
-    useEffect(() => {
-        // Cuando el componente se monta, inicia la conversación con un mensaje del bot
-        const initialBotMessage = {
-            _id: uuidv4(),
-            text: "Hola, ¿en qué puedo ayudarte hoy?",
-            createdAt: new Date(),
-            user: {
-                _id: 2,
-                name: "Chatbot",
-            },
-        };
-        setMessages([initialBotMessage]);
-    }, []);
-
     return (
-        <GiftedChat
-            messages={messages}
-            onSend={(messages) => onSend(messages)}
-            user={{
-                _id: 1,
-            }}
-            renderAvatar={null}
-        />
+        <>
+            <WebView
+                source={{ uri: "https://console.dialogflow.com/api-client/demo/embedded/35abdc44-5c4b-4588-9426-d404bb868c35" }}
+                style={{ flex: 1 }}
+            />
+            <GiftedChat
+                messages={messages}
+                onSend={(messages) => onSend(messages)}
+                user={{
+                    _id: 1,
+                }}
+                renderAvatar={null}
+            />
+        </>
     );
 }
