@@ -8,7 +8,7 @@ const ListarScreen = ({ userId }) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`http://192.168.0.5:8080/horas/${userId}`);
-        setHoras(response.data.rows); // Modifica esta línea
+        setHoras(response.data.rows);
         console.log('Datos recibidos:', response.data);
       } catch (error) {
         console.error('Error al realizar la solicitud:', error);
