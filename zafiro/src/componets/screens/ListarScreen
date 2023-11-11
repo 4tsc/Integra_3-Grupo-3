@@ -1,0 +1,41 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const ListarScreen = ({ userID }) => {
+  const [horas, setHoras] = useState([]);
+  const idUsuario = userID;  // Reemplaza con el ID de usuario que deseas consultar
+  const apiUrl = 'http://192.168.0.5:8080';  // Reemplaza con la URL de tu servidor
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/horas/${idUsuario}`);
+        setHoras(response.data);
+        console.log('Datos recibidos:', response.data);
+      } catch (error) {
+        console.error('Error al realizar la solicitud:', error);
+      }
+    };
+
+    fetchData();  // Llama a la función al cargar el componente
+
+    // El array de dependencias vacío [] asegura que useEffect se ejecute solo una vez al montar el componente.
+  }, []); 
+
+  return (
+    <div>
+      <h1>Horas del Usuario</h1>
+      <ul>
+        {horas.map(hora => (
+          <li key={hora.fecha}>
+            <p>Fecha: {hora.fecha}</p>
+            <p>Hora: {hora.hora}</p>
+            <p>Descripción: {hora.descripcion}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default ListarScreen;

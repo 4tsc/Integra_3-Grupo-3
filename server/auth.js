@@ -149,6 +149,26 @@ app.post('/obtener-asesores', async (req, res) => {
   }
 });
 
+app.get('/horas/:idUsuario', (req, res) => {
+  const idUsuario = req.params.idUsuario;
+
+  // Consulta SQL para obtener las horas de un usuario específico
+  const sql = `
+    SELECT descripcion, hora, fecha
+    FROM horas
+    WHERE id_usuario = ?
+  `;
+
+  connection.query(sql, [idUsuario], (error, results) => {
+    if (error) {
+      console.error('Error en la consulta SQL:', error);
+      res.status(500).send('Error en el servidor');
+    } else {
+      res.json(results);
+    }
+  });
+});
+
 app.post('/crear-hora', async (req, res) => {
   const idUsuario = req.body.id; // Ajustar según sea necesario
   const idAsesor = req.body.id_asesor;

@@ -23,7 +23,7 @@ CREATE TABLE asesor (
 
 -- Crear la tabla "horas"
 CREATE TABLE horas (
-    id_hora INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion VARCHAR(300) NOT NULL,
     hora TIME NOT NULL,
     fecha DATE NOT NULL,
