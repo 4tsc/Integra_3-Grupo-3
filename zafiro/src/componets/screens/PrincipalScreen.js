@@ -4,10 +4,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './inicio';
 import SettingsScreen from './settings';
 import LogOut from './Logout';
+import ListarScreen from './ListarScreen';
 
 const Tab = createBottomTabNavigator();
 
 function PrincipalScreen({ userId, onLogout }) {
+  console.log(userId)
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -22,6 +24,19 @@ function PrincipalScreen({ userId, onLogout }) {
         }}
       >
         {() => <HomeScreen userId={userId} />}
+      </Tab.Screen>
+      <Tab.Screen
+        name="Listar horas"
+        options={{
+          title: 'Listar horas',
+          headerStyle: { backgroundColor: '#01568e' },
+          headerTintColor: 'white',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="log-out-outline" size={size} color={color} />
+          ),
+        }}
+      >
+        {() => <ListarScreen userId={userId} />}
       </Tab.Screen>
       <Tab.Screen
         name="Perfil"

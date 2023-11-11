@@ -149,8 +149,10 @@ app.post('/obtener-asesores', async (req, res) => {
   }
 });
 
-app.get('/horas/:idUsuario', (req, res) => {
-  const idUsuario = req.params.idUsuario;
+app.get('/horas/:id', async (req, res) => {
+  console.log("recibi algo")
+  const userId = req.params.id;
+  console.log('userId:', userId);
 
   // Consulta SQL para obtener las horas de un usuario específico
   const sql = `
@@ -158,15 +160,17 @@ app.get('/horas/:idUsuario', (req, res) => {
     FROM horas
     WHERE id_usuario = ?
   `;
+  try {
+    const connection = await pool.getConnection();
 
-  connection.query(sql, [idUsuario], (error, results) => {
-    if (error) {
-      console.error('Error en la consulta SQL:', error);
-      res.status(500).send('Error en el servidor');
-    } else {
-      res.json(results);
-    }
-  });
+    const [rows] = await connection.query(sql, [userId]);
+
+    // Devuelve los resultados de la consulta en formato JSON con la propiedad 'rows'
+    res.json({ rows });
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    res.status(500).send('Error en el servidor');
+  }
 });
 
 app.post('/crear-hora', async (req, res) => {
@@ -175,7 +179,6 @@ app.post('/crear-hora', async (req, res) => {
   const fecha = req.body.fecha;
   const hora = req.body.hora;
   const descripcion = req.body.descripcion; // Asumiendo que tienes un campo "descripcion" para la asesoría
-  const disponibilidad = 1; // Establecer el valor de disponibilidad
 
   try {
     const connection = await pool.getConnection();
@@ -184,8 +187,8 @@ app.post('/crear-hora', async (req, res) => {
     console.log('Conexión a la base de datos exitosa');
 
     const sql = `
-      INSERT INTO horas (id_usuario, id_asesor, fecha, hora, descripcion, disponibilidad)
-      VALUES (?, ?, ?, ?, ?, ?);
+      INSERT INTO horas (id_usuario, id_asesor, fecha, hora, descripcion)
+      VALUES (?, ?, ?, ?, ?);
     `;
 
     await connection.query(sql, [idUsuario, idAsesor, fecha, hora, descripcion, disponibilidad]);

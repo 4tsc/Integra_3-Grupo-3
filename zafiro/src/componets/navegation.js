@@ -7,7 +7,7 @@ import Agendar from "./screens/AgendarScreen.js";
 import PrincipalScreen from "./screens/PrincipalScreen.js";
 import EliminarScreen from "./screens/EliminarScreen.js";
 import { ChatScreen } from "./screens/ChatScreen.js";
-import ListarScreen from "./ruta/a/ListarScreen"; // Importa el nuevo componente
+import ListarScreen from "./screens/ListarScreen"; // Importa el nuevo componente
 
 const Stack = createStackNavigator();
 

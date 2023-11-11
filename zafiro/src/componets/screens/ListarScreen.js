@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const ListarScreen = ({ userID }) => {
+const ListarScreen = ({ userId }) => {
   const [horas, setHoras] = useState([]);
-  const idUsuario = userID;  // Reemplaza con el ID de usuario que deseas consultar
-  const apiUrl = 'http://192.168.0.5:8080';  // Reemplaza con la URL de tu servidor
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/horas/${idUsuario}`);
-        setHoras(response.data);
+        const response = await axios.get(`http://192.168.0.5:8080/horas/${userId}`);
+        setHoras(response.data.rows); // Modifica esta línea
         console.log('Datos recibidos:', response.data);
       } catch (error) {
         console.error('Error al realizar la solicitud:', error);
       }
     };
 
-    fetchData();  // Llama a la función al cargar el componente
-
-    // El array de dependencias vacío [] asegura que useEffect se ejecute solo una vez al montar el componente.
-  }, []); 
+    fetchData();
+  }, [userId]);
 
   return (
     <div>
