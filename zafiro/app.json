@@ -2,24 +2,20 @@
   "expo": {
     "owner": "zaphiroproject",
     "name": "Zafiro-app",
+    "scheme": "Zafiro-app" ,
     "slug": "Zafiro-app",
     "version": "1.0.0",
+    "permissions": ["CALENDAR"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "notification": {
-      "icon": "./assets/icon.png",
-      "color": "#ffffff",
-      "androidMode": "collapse",
-      "iosDisplayInForeground": true
-    },  
     "splash": {
       "image": "./assets/Logo_UCT.png",
       "resizeMode": "contain",
       "backgroundColor": "#ABDAFF"
     },
     "assetBundlePatterns": [
-      "**/*"
+      "*/"
     ],
     "ios": {
       "supportsTablet": true
@@ -27,8 +23,8 @@
     "android": {
       "package": "com.uct.zafiroapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/Logo_UCT.png",
+        "backgroundColor": "#ABDAFF"
       }
     },
     "web": {
