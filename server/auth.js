@@ -149,17 +149,41 @@ app.post('/obtener-asesores', async (req, res) => {
   }
 });
 
+app.delete('/horas/:userId/:horaId', async (req, res) => {
+  const userId = req.params.userId;
+  const horaId = req.params.horaId;
+
+  try {
+    const connection = await pool.getConnection();
+
+    // Consulta SQL para eliminar la hora específica por su id
+    const sql = `
+      DELETE FROM horas
+      WHERE id_usuario = ? AND id = ?;
+    `;
+
+    await connection.query(sql, [userId, horaId]);
+
+    connection.release();
+
+    res.status(200).send('Hora eliminada exitosamente');
+  } catch (error) {
+    console.error('Error al eliminar la hora:', error);
+    res.status(500).send('Error en el servidor al eliminar la hora');
+  }
+});
+
 app.get('/horas/:id', async (req, res) => {
-  console.log("recibi algo")
   const userId = req.params.id;
   console.log('userId:', userId);
 
-  // Consulta SQL para obtener las horas de un usuario específico
+  // Consulta SQL para obtener las horas de un usuario específico con el campo 'id'
   const sql = `
-    SELECT descripcion, hora, fecha
+    SELECT id, descripcion, hora, fecha
     FROM horas
     WHERE id_usuario = ?
   `;
+  
   try {
     const connection = await pool.getConnection();
 

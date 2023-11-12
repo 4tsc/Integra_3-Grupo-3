@@ -4,6 +4,18 @@ import axios from 'axios';
 const ListarScreen = ({ userId }) => {
   const [horas, setHoras] = useState([]);
 
+  const handleEliminar = async (horaId) => {
+    try {
+      // Realiza la solicitud para eliminar la entrada con el id específico
+      await axios.delete(`http://192.168.0.5:8080/horas/${userId}/${horaId}`);
+      
+      // Actualiza el estado eliminando la entrada con el id correspondiente
+      setHoras(prevHoras => prevHoras.filter(hora => hora.id !== horaId));
+    } catch (error) {
+      console.error('Error al eliminar la entrada:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,11 +34,16 @@ const ListarScreen = ({ userId }) => {
     <div>
       <h1>Horas del Usuario</h1>
       <ul>
-        {horas.map(hora => (
-          <li key={hora.fecha}>
-            <p>Fecha: {hora.fecha}</p>
-            <p>Hora: {hora.hora}</p>
-            <p>Descripción: {hora.descripcion}</p>
+        {horas.map((hora) => (
+          <li key={hora.id}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <p>Fecha: {hora.fecha}</p>
+                <p>Hora: {hora.hora}</p>
+                <p>Descripción: {hora.descripcion}</p>
+              </div>
+              <button onClick={() => handleEliminar(hora.id)}>Eliminar</button>
+            </div>
           </li>
         ))}
       </ul>
