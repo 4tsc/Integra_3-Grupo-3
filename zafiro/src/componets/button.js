@@ -1,11 +1,34 @@
-import React from 'react';
-import { Button, View, Image, FlatList, Linking } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { Button, View, Image, FlatList, Linking, ScrollView, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles_menu } from './styles/styles.js';
-//test
 
 const AppButton = () => {
   const navigation = useNavigation();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Define a reference to the ScrollView component
+  const scrollViewRef = useRef();
+
+  // Function to scroll to the next image
+  const scrollToNextImage = () => {
+    const newImageIndex = (currentImageIndex + 1) % carouselItems.length;
+    setCurrentImageIndex(newImageIndex);
+    const offsetX = newImageIndex * windowWidth;
+    scrollViewRef.current.scrollTo({ x: offsetX, animated: true });
+  };
+
+  // Use useEffect to set up the automatic scrolling
+  useEffect(() => {
+    const scrollInterval = setInterval(() => {
+      scrollToNextImage();
+    }, 5000); // Change the interval (in milliseconds) as desired
+
+    // Clear the interval when the component unmounts
+    return () => {
+      clearInterval(scrollInterval);
+    };
+  }, [currentImageIndex]);
 
   const handlePress = (screenName) => {
     if (screenName === 'Agendar') {
@@ -38,6 +61,32 @@ const AppButton = () => {
     { title: 'Formacion Docente', imageSource: require('../componets/images/formacion.png'), screenName: 'Formacion Docente' },
   ];
 
+const CarouselItem = ({ item }) => (
+  <View >
+    <Image
+      source={item.imageSource}
+      style={{
+        width: windowWidth,
+        height: 100,
+        resizeMode: 'stretch', // los modos de redimensionamiento son: 'cover', 'contain', 'stretch', 'repeat', 'center'
+      }}
+    />
+  </View>
+  );
+
+  const carouselItems = [
+    { imageSource: require('../componets/images/UCT_logo.png') },
+    { imageSource: require('../componets/images/prueba_2.jpg') },
+    { imageSource: require('../componets/images/prueba_3.jpg') },
+  ];
+
+  const windowWidth = Dimensions.get('window').width;
+
+  const handleScroll = (event) => {
+    const newImageIndex = Math.round(event.nativeEvent.contentOffset.x / windowWidth);
+    setCurrentImageIndex(newImageIndex);
+  };
+
   const renderItem = ({ item }) => (
     <View style={styles_menu.item}>
       <Image source={item.imageSource} style={styles_menu.image} />
@@ -50,13 +99,27 @@ const AppButton = () => {
   );
 
   return (
-    <FlatList
-      data={menuItems}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.title}
-      numColumns={2}
-      columnWrapperStyle={styles_menu.row}
-    />
+    <View>
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        onScroll={handleScroll}
+        showsHorizontalScrollIndicator={false}
+      >
+        {carouselItems.map((item, index) => (
+          <CarouselItem key={index} item={item} />
+        ))}
+      </ScrollView>
+
+      <FlatList
+        data={menuItems}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.title}
+        numColumns={2}
+        columnWrapperStyle={styles_menu.row}
+      />
+    </View>
   );
 };
 
