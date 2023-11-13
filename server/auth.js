@@ -96,26 +96,167 @@ const HTMLDocente = `
 
 
 // Endpoint para autenticación
-app.post('/auth', async (req, res) => {
+app.post('/auth_asesor', async (req, res) => {
   const { correo, contraseña } = req.body;
 
-  console.log('Solicitud de inicio de sesión recibida:');
-  console.log('Correo:', correo);
-  console.log('Contraseña:', contraseña);
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.execute('SELECT * FROM asesor WHERE correo = ? AND pass = ?', [correo, contraseña]);
+
+    if (rows.length === 1) {
+      const userId = rows[0].id_asesor; // Obtiene el ID del usuario
+      console.log('ID de usuario obtenido:', userId); // Agrega esta línea para imprimir el ID
+      res.status(200).json({ mensaje: 'Autenticación exitosa', userId: rows[0].id_asesor, tipoUsuario: 'asesor' });
+    } else {
+      res.status(401).json({ mensaje: 'Autenticación fallida' });
+    }
+  } catch (error) {
+    console.error('Error al autenticar asesor:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+app.post('/auth_usuario', async (req, res) => {
+  const { correo, contraseña } = req.body;
 
   try {
     const connection = await pool.getConnection();
     const [rows] = await connection.execute('SELECT * FROM usuario WHERE correo = ? AND pass = ?', [correo, contraseña]);
 
     if (rows.length === 1) {
-      // Autenticación exitosa
-      res.status(200).json({ mensaje: 'Autenticación exitosa' });
+      const userId = rows[0].id_usuario; // Obtiene el ID del usuario
+      console.log('ID de usuario obtenido:', userId); // Agrega esta línea para imprimir el ID
+      res.status(200).json({ mensaje: 'Autenticación exitosa', userId: rows[0].id_usuario, tipoUsuario: 'usuario' });
     } else {
-      // Autenticación fallida
       res.status(401).json({ mensaje: 'Autenticación fallida' });
     }
   } catch (error) {
-    console.error('Error al autenticar:', error);
+    console.error('Error al autenticar usuario:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+app.delete('/horas/:userId/:horaId', async (req, res) => {
+  const userId = req.params.userId;
+  const horaId = req.params.horaId;
+
+  try {
+    const connection = await pool.getConnection();
+
+    // Consulta SQL para eliminar la hora específica por su id
+    const sql = `
+      DELETE FROM horas
+      WHERE id_usuario = ? AND id = ?;
+    `;
+
+    await connection.query(sql, [userId, horaId]);
+
+    connection.release();
+
+    res.status(200).send('Hora eliminada exitosamente');
+  } catch (error) {
+    console.error('Error al eliminar la hora:', error);
+    res.status(500).send('Error en el servidor al eliminar la hora');
+  }
+});
+
+app.get('/horas/:id', async (req, res) => {
+  const userId = req.params.id;
+  console.log('userId:', userId);
+
+  // Consulta SQL para obtener las horas de un usuario específico con el campo 'id'
+  const sql = `
+    SELECT id, descripcion, hora, fecha
+    FROM horas
+    WHERE id_usuario = ?
+  `;
+  
+  try {
+    const connection = await pool.getConnection();
+
+    const [rows] = await connection.query(sql, [userId]);
+
+    // Devuelve los resultados de la consulta en formato JSON con la propiedad 'rows'
+    res.json({ rows });
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    res.status(500).send('Error en el servidor');
+  }
+});
+
+app.post('/crear-hora', async (req, res) => {
+  const idUsuario = req.body.id; // Ajustar según sea necesario
+  const idAsesor = req.body.id_asesor;
+  const fecha = req.body.fecha;
+  const hora = req.body.hora;
+  const descripcion = req.body.descripcion; // Asumiendo que tienes un campo "descripcion" para la asesoría
+
+  try {
+    const connection = await pool.getConnection();
+
+    // La conexión a la base de datos se obtuvo correctamente
+    console.log('Conexión a la base de datos exitosa');
+
+    const sql = `
+      INSERT INTO horas (id_usuario, id_asesor, fecha, hora, descripcion)
+      VALUES (?, ?, ?, ?, ?);
+    `;
+
+    await connection.query(sql, [idUsuario, idAsesor, fecha, hora, descripcion, disponibilidad]);
+
+    // Devuelve un mensaje de éxito en formato JSON
+    res.json({ mensaje: 'Hora creada con éxito' });
+  } catch (error) {
+    console.error('Error al crear hora:', error);
+    res.status(500).json({ error: 'Error en la base de datos' });
+  }
+});
+
+
+
+// Rutas protegidas que requieren el ID del usuario
+
+// Obtener información de usuario por ID
+app.get('/users/:id', async (req, res) => {
+  const userId = req.params.id;
+  console.log('ID del usuario recibido:', userId); // Agrega este log
+
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.execute('SELECT * FROM usuario WHERE id_usuario = ?', [userId]);
+    connection.release();
+
+    if (rows.length === 1) {
+      res.status(200).json(rows[0]);
+    } else {
+      res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al obtener el usuario:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+// Actualizar información de usuario por ID
+app.put('/users/:id', async (req, res) => {
+  const userId = req.params.id;
+  const { nombre, correo } = req.body;
+
+  try {
+    const connection = await pool.getConnection();
+    const [result] = await connection.execute(
+      'UPDATE usuario SET nombre = ?, correo = ? WHERE id_usuario = ?',
+      [nombre, correo, userId]
+    );
+    connection.release();
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ mensaje: 'Usuario actualizado exitosamente' });
+    } else {
+      res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al actualizar el usuario:', error);
     res.status(500).json({ mensaje: 'Error interno del servidor' });
   }
 });

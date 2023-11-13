@@ -2,53 +2,66 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, TextInput, Image, StatusBar } from 'react-native';
 import { styles_log } from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
-import * as Crypto from 'expo-crypto';
 
-const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
+const Log_in = ({ onLogin }) => {
   const [text, setText] = useState('');
   const [text2, setText2] = useState('');
   const navigation = useNavigation();
 
   const handlePress1 = () => {
-    onLogin(); // Llama a la función onLogin para indicar que el usuario ha iniciado sesión
+    onLogin();
     navigation.navigate('PrincipalScreen');
   };
 
   const handlePress = async () => {
-    const data = {
-      correo: text,
-      contraseña: text2,
-    };
-
     try {
-      const hashedPassword = await Crypto.digestStringAsync(
-        Crypto.CryptoDigestAlgorithm.SHA256,
-        text2
-      );
-
-      // Usar la contraseña encriptada en lugar de la original
-      data.contraseña = hashedPassword;
-
-      const response = await fetch('http://192.168.0.5:8080/auth', {
+      const data = {
+        correo: text,
+        contraseña: text2,
+      };
+  
+      const responseAsesor = await fetch('http://192.168.0.6:8080/auth_asesor', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // Indicar que se está enviando JSON
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data), // Convertir el objeto a JSON
+        body: JSON.stringify(data),
       });
-
-      if (response.status === 200) {
-        // Autenticación exitosa, llama a la función onLogin para notificar
-        onLogin(); // Llama a la función onLogin para indicar que el usuario ha iniciado sesión
-        navigation.navigate('PrincipalScreen');
+  
+      if (responseAsesor.status === 200) {
+        try {
+          const responseData = await responseAsesor.json();
+          const userId = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
+  
+          console.log('Autenticación exitosa. ID de usuario:', userId);
+  
+          onLogin();
+          navigation.navigate('PrincipalScreen');
+        } catch (jsonError) {
+          console.error('Error al parsear respuesta JSON del asesor:', jsonError);
+        }
       } else {
-        // Manejar la respuesta de autenticación fallida aquí
-        // Puedes mostrar un mensaje de error o realizar otras acciones
+        const responseUsuario = await fetch('http://192.168.0.6:8080/auth_usuario', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+  
+        if (responseUsuario.status === 200) {
+          onLogin();
+          navigation.navigate('PrincipalScreen');
+        } else {
+          const errorData = await responseUsuario.json();
+          console.error('Error de autenticación:', errorData.mensaje);
+        }
       }
     } catch (error) {
-      // Manejar errores de red u otros errores aquí
+      console.error('Error de red u otros errores:', error.message);
     }
   };
+  
 
   return (
     <View style={styles_log.container}>
@@ -86,7 +99,7 @@ const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
       </View>
 
       <View style={styles_log.container5}>
-        <Pressable style={styles_log.btn} onPress={handlePress1}>
+        <Pressable style={styles_log.btn} onPress={handlePress}>
           <Text style={styles_log.btnText}>Iniciar Sesión</Text>
         </Pressable>
       </View>
