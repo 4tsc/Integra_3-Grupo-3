@@ -198,32 +198,41 @@ app.get('/horas/:id', async (req, res) => {
 });
 
 app.post('/crear-hora', async (req, res) => {
-  const idUsuario = req.body.id; // Ajustar según sea necesario
-  const idAsesor = req.body.id_asesor;
-  const fecha = req.body.fecha;
-  const hora = req.body.hora;
-  const descripcion = req.body.descripcion; // Asumiendo que tienes un campo "descripcion" para la asesoría
-
   try {
+    const { idUsuario, idAsesor, fecha, hora, descripcion } = req.body;
+
+    // Ensure that all required fields are present
+    if (!idUsuario || !idAsesor || !fecha || !hora || !descripcion) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Extract date and time components
+    const fechaCortada = fecha.slice(0, 10);
+    const horaCortada = hora.slice(0, -7);
+
     const connection = await pool.getConnection();
 
-    // La conexión a la base de datos se obtuvo correctamente
-    console.log('Conexión a la base de datos exitosa');
+    try {
+      // Use parameterized query to prevent SQL injection
+      const sql = `
+        INSERT INTO horas (id_usuario, id_asesor, fecha, hora, descripcion)
+        VALUES (?, ?, ?, ?, ?);
+      `;
 
-    const sql = `
-      INSERT INTO horas (id_usuario, id_asesor, fecha, hora, descripcion)
-      VALUES (?, ?, ?, ?, ?);
-    `;
+      await connection.query(sql, [idUsuario, idAsesor, fechaCortada, horaCortada, descripcion]);
 
-    await connection.query(sql, [idUsuario, idAsesor, fecha, hora, descripcion, disponibilidad]);
-
-    // Devuelve un mensaje de éxito en formato JSON
-    res.json({ mensaje: 'Hora creada con éxito' });
+      // Return a success message in JSON format
+      res.json({ mensaje: 'Hora creada con éxito' });
+    } finally {
+      // Release the database connection
+      connection.release();
+    }
   } catch (error) {
     console.error('Error al crear hora:', error);
     res.status(500).json({ error: 'Error en la base de datos' });
   }
 });
+
 
 
 

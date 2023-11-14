@@ -7,8 +7,8 @@ import * as Calendar from 'expo-calendar';
 import axios from 'axios';
 import { styles_Horas } from '../styles/styles';
 
-const AgendarScreen = ({ userID }) => {
-  const [selectedAsesor, setSelectedAsesor] = useState(null);
+const AgendarScreen = ({ userId }) => {
+  const [selectedAsesor, setSelectedAsesor] = useState({ id_asesor: null, nombre: null });
   const [asesores, setAsesores] = useState([]);
   const [calendars, setCalendars] = useState([]);
   const [selectedCalendarId, setSelectedCalendarId] = useState(null);
@@ -17,8 +17,8 @@ const AgendarScreen = ({ userID }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [motivoConsulta, setMotivoConsulta] = useState('');
-  const [modoReunion, setModoReunion] = useState('Presencial'); // Establecer el valor predeterminado en 'Presencial'
-  const [selectedModoReunion, setSelectedModoReunion] = useState('Presencial'); // Nuevo estado para el Picker
+  const [modoReunion, setModoReunion] = useState('Presencial');
+  const [selectedModoReunion, setSelectedModoReunion] = useState('Presencial');
 
   const motivoConsultaOptions = [
     'Virtualización',
@@ -57,15 +57,15 @@ const AgendarScreen = ({ userID }) => {
   };
 
   const addEventToCalendar = async () => {
-    if (selectedCalendarId && eventDate && eventTime) {
+    if (selectedCalendarId && eventDate && eventTime && selectedAsesor.id_asesor) {
       try {
         const selectedDateTime = new Date(eventDate);
         selectedDateTime.setHours(eventTime.getHours());
         selectedDateTime.setMinutes(eventTime.getMinutes());
-  
+
         const now = new Date();
         const maxEndTime = new Date(selectedDateTime.getTime() + 30 * 60 * 1000);
-  
+
         if (
           selectedDateTime.getDay() !== 0 &&
           selectedDateTime.getDay() !== 6 &&
@@ -74,23 +74,24 @@ const AgendarScreen = ({ userID }) => {
           maxEndTime <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
         ) {
           const event = {
-            title: 'Asesoría con ' + selectedAsesor,
+            title: 'Asesoría con ' + selectedAsesor.nombre,
             startDate: selectedDateTime,
             endDate: maxEndTime,
             timeZone: 'America/Santiago',
             modoReunion: selectedModoReunion,
-          };          
-  
+          };
+
           const eventId = await Calendar.createEventAsync(selectedCalendarId, event);
           const calendarName = getCalendarNameById(selectedCalendarId);
           console.log('Evento creado en el calendario:', calendarName);
           console.log('Evento creado con éxito. ID del evento:', eventId);
-  
-          // Nueva solicitud HTTP para crear una hora en la base de datos
+          console.log("id asesor: ", selectedAsesor.id_asesor);
+          console.log("id usuarioL:", userId);
+
           try {
-            const response = await axios.post('http://192.168.0.5:8080/crear-hora', {
-              idUsuario: userID, // Ajustar según sea necesario
-              idAsesor: selectedAsesor.id_asesor, // Ajustar según sea necesario
+            const response = await axios.post('http://192.168.64.155:8080/crear-hora', {
+              idUsuario: userId,
+              idAsesor: selectedAsesor.id_asesor,
               fecha: eventDate,
               hora: eventTime.toLocaleTimeString(),
               descripcion: motivoConsulta,
@@ -100,10 +101,9 @@ const AgendarScreen = ({ userID }) => {
             console.error('Error al realizar la solicitud para crear hora:', error);
             Alert.alert('Error', 'No se pudo crear la hora en la base de datos.');
           }
-  
-          // Solicitud HTTP para enviar correo electrónico
+
           try {
-            const response = await axios.post('http://192.168.0.5:8080/enviar-correo', {
+            const response = await axios.post('http://192.168.64.155:8080/enviar-correo', {
               motivoConsulta,
               modoReunion: selectedModoReunion,
             });
@@ -129,16 +129,15 @@ const AgendarScreen = ({ userID }) => {
 
   const obtenerAsesores = async () => {
     try {
-      console.log('Obtener asesores se llamó.'); // Agrega esta línea
+      console.log('Obtener asesores se llamó.');
       console.log('Motivo de consulta a enviar:', motivoConsulta);
-      const response = await axios.post('http://192.168.0.5:8080/obtener-asesores', {
+      const response = await axios.post('http://192.168.64.155:8080/obtener-asesores', {
         motivoConsulta,
       });
-  
+
       console.log('Respuesta del servidor:', response.data);
 
       if (response.status === 200) {
-        // Manejar la respuesta exitosa aquí
         const asesoresObtenidos = response.data.map((asesor) => ({
           id_asesor: asesor.id_asesor,
           nombre: asesor.nombre,
@@ -146,16 +145,14 @@ const AgendarScreen = ({ userID }) => {
         setAsesores(asesoresObtenidos);
         console.log('Asesores obtenidos:', asesoresObtenidos);
       } else {
-        // Manejar la respuesta en caso de error
         console.error('Error al obtener asesores');
         Alert.alert('Error', 'No se pudieron obtener los asesores.');
       }
     } catch (error) {
-      // Manejar errores de red u otros errores aquí
       console.error('Error de red:', error);
       Alert.alert('Error', 'No se pudo realizar la solicitud.');
     }
-  };//TODO solicitar id de los asesores correspondientes a las areas y retornarlos.
+  };
 
   const showDatePickerModal = () => {
     setShowDatePicker(true);
@@ -184,7 +181,6 @@ const AgendarScreen = ({ userID }) => {
     }
   };
 
-  // Agrega una función para seleccionar una hora específica
   const selectSpecificTime = (hours, minutes) => {
     const selectedTime = new Date();
     selectedTime.setHours(hours);
@@ -242,7 +238,7 @@ const AgendarScreen = ({ userID }) => {
       <Picker
         selectedValue={motivoConsulta}
         onValueChange={(value) => {
-          console.log('Motivo de consulta seleccionado:', value); // Agrega este console.log
+          console.log('Motivo de consulta seleccionado:', value);
           setMotivoConsulta(value);
         }}
       >
@@ -253,10 +249,6 @@ const AgendarScreen = ({ userID }) => {
 
       <Button title="Obtener Asesores" onPress={obtenerAsesores} />
 
-      {/* Agrega un FlatList para mostrar la lista de asesores */}
-  
-
-
       <Text>Lista de Asesores:</Text>
       {asesores.length > 0 && (
         <FlatList
@@ -265,7 +257,7 @@ const AgendarScreen = ({ userID }) => {
           renderItem={({ item }) => (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, marginVertical: 8 }}>
               <Text>{item.nombre}</Text>
-              <Button title="Elegir" onPress={() => setSelectedAsesor(item.nombre)} />
+              <Button title="Elegir" onPress={() => setSelectedAsesor({ id_asesor: item.id_asesor, nombre: item.nombre })} />
             </View>
           )}
         />

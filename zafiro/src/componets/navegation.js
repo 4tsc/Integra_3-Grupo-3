@@ -65,8 +65,11 @@ const Navegador = () => {
             headerStyle: { backgroundColor: "#01568e" },
             headerTintColor: "white",
           }}
-          component={Agendar}
-        />
+        >
+          {(props) => (
+            <Agendar {...props} userId={userId} />
+          )}
+          </Stack.Screen>
         <Stack.Screen
           name="EliminarScreen"
           options={{

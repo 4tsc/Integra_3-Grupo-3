@@ -7,7 +7,7 @@ const ListarScreen = ({ userId }) => {
   const handleEliminar = async (horaId) => {
     try {
       // Realiza la solicitud para eliminar la entrada con el id específico
-      await axios.delete(`http://192.168.0.5:8080/horas/${userId}/${horaId}`);
+      await axios.delete(`http://192.168.64.155:8080/horas/${userId}/${horaId}`);
       
       // Actualiza el estado eliminando la entrada con el id correspondiente
       setHoras(prevHoras => prevHoras.filter(hora => hora.id !== horaId));
@@ -19,7 +19,7 @@ const ListarScreen = ({ userId }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://192.168.0.5:8080/horas/${userId}`);
+        const response = await axios.get(`http://192.168.64.155:8080/horas/${userId}`);
         setHoras(response.data.rows);
         console.log('Datos recibidos:', response.data);
       } catch (error) {

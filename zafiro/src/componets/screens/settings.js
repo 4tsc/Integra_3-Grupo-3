@@ -9,7 +9,7 @@ function ProfileScreen({ userId }) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://192.168.0.5:8080/users/${userId}`);
+        const response = await fetch(`http://192.168.64.155:8080/users/${userId}`);
         const userData = await response.json();
         setName(userData.nombre);
         setEmail(userData.correo);
@@ -28,7 +28,7 @@ function ProfileScreen({ userId }) {
   const handleSaveChanges = async () => {
     // Send edited data to the server
     try {
-      const response = await fetch(`http://192.168.0.5:8080/users/${userId}`, {
+      const response = await fetch(`http://192.168.64.155:8080/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
