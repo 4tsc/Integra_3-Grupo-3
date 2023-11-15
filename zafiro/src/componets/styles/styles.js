@@ -127,26 +127,33 @@ const styles_Agendar = StyleSheet.create({
 const styles_menu = StyleSheet.create({
   circularItem: {
     alignItems: 'center',
+    justifyContent: 'center',
     margin: 10,
+    backgroundColor: '#285C9B',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    overflow: 'hidden',
   },
-  circularImageContainer: {
-    width: 80,            // Establece el ancho del contenedor circular en 100 unidades (píxeles o algún otro valor de medida).
-    height: 80,          // Establece la altura del contenedor circular en 100 unidades (píxeles u otra medida).
-    borderRadius: 50,     // Define un radio de borde de 50 unidades, lo que crea un contenedor circular.
-    overflow: 'hidden',   // Oculta cualquier contenido que se desborde del contenedor circular.
-    marginBottom: 10,     // Agrega un espacio en la parte inferior del contenedor circular de 10 unidades
-  },
+  //circularImageContainer: {
+    //width: 80,            // Establece el ancho del contenedor circular en 100 unidades (píxeles o algún otro valor de medida).
+    //height: 80,          // Establece la altura del contenedor circular en 100 unidades (píxeles u otra medida).
+    //borderRadius: 50,     // Define un radio de borde de 50 unidades, lo que crea un contenedor circular.
+    //overflow: 'hidden',   // Oculta cualquier contenido que se desborde del contenedor circular.
+    //marginBottom: 10,     // Agrega un espacio en la parte inferior del contenedor circular de 10 unidades
+  //},
   circularImage: {
-    width: '100%', // Establece el ancho de la imagen al 100% del contenedor circular.
-    height: '100%',// Establece la altura de la imagen al 100% del contenedor circular.
+    width: '40%', // Establece el ancho de la imagen al 100% del contenedor circular.
+    height: '40%',// Establece la altura de la imagen al 100% del contenedor circular.
    // maxWidth: '80%', // Controla el ancho máximo de las imágenes
    // maxHeight: '80%', // Controla la altura máxima de las imágenes
     resizeMode: 'contain', // Configura cómo la imagen se ajusta dentro del contenedor. 'contain' permite que la imagen se ajuste dentro del contenedor sin distorsionarla.
   },
   itemTitle: {
     fontSize: 16, // Establece el tamaño de fuente del título en 16 unidades (píxeles u otra medida).
-    color: 'black', // Define el color del texto del título como negro.
+    color: 'white', // Define el color del texto del título como negro.
     marginTop: 5, // Agrega un espacio en la parte superior del título de 5 unidades.
+    textAlign: 'center',  // Añade esta línea para centrar el texto
   },
   row: {
     flexDirection: 'row', // Configura el diseño de la vista para que los elementos estén en una fila horizontal.
