@@ -128,11 +128,11 @@ const styles_menu = StyleSheet.create({
   circularItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 10,
+    margin: 20,
     backgroundColor: '#285C9B',
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     overflow: 'hidden',
   },
   //circularImageContainer: {
@@ -150,7 +150,7 @@ const styles_menu = StyleSheet.create({
     resizeMode: 'contain', // Configura cómo la imagen se ajusta dentro del contenedor. 'contain' permite que la imagen se ajuste dentro del contenedor sin distorsionarla.
   },
   itemTitle: {
-    fontSize: 16, // Establece el tamaño de fuente del título en 16 unidades (píxeles u otra medida).
+    fontSize: 14, // Establece el tamaño de fuente del título en 16 unidades (píxeles u otra medida).
     color: 'white', // Define el color del texto del título como negro.
     marginTop: 5, // Agrega un espacio en la parte superior del título de 5 unidades.
     textAlign: 'center',  // Añade esta línea para centrar el texto
@@ -158,6 +158,17 @@ const styles_menu = StyleSheet.create({
   row: {
     flexDirection: 'row', // Configura el diseño de la vista para que los elementos estén en una fila horizontal.
     justifyContent: 'center', // Centra horizontalmente los elementos en la fila.
+  },
+  panelContainer: {
+    borderRadius: 15,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff',
+    margin: 10,
+    width: 300, // Puedes ajustar el ancho del panel según tus necesidades
+    height: 400, // Puedes ajustar la altura del panel según tus necesidades
+    position: 'absolute', // Cambia a 'relative' si quieres posicionarlo respecto al flujo normal del documento
+    top: 50, // Ajusta la posición superior según tus necesidades
+    left: 20, // Ajusta la posición izquierda según tus necesidades
   },
 });
 
