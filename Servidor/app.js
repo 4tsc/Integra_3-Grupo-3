@@ -88,6 +88,6 @@ app.post('/enviar-correo', (req, res) => {
 });
 
 // Inicia el servidor
-app.listen(port, '192.168.0.2', () => {
-  console.log(`Servidor escuchando en http://192.168.0.2:${port}`);
+app.listen(port, () => {
+  console.log(`Servidor escuchando en http://localhost:${port}`);
 });

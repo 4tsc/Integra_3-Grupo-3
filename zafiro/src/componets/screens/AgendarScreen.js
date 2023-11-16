@@ -88,7 +88,7 @@ const AgendarScreen = ({ userID }) => {
 
           // Nueva solicitud HTTP para crear una hora en la base de datos
           try {
-            const response = await axios.post('http://192.168.0.5:8080/crear-hora', {
+            const response = await axios.post('http://http://192.168.100.7:8080/crear-hora', {
               idUsuario: userID,
               idAsesor: selectedAsesor.id_asesor,
               fecha: eventDate,
@@ -103,7 +103,7 @@ const AgendarScreen = ({ userID }) => {
               body: 'Se ha agendado correctamente tu cita con el asesor.',
             };
 
-            const { data: token } = await axios.post('http://192.168.0.5:8080/get-notification-token', {
+            const { data: token } = await axios.post('http://192.168.100.7:8080/get-notification-token', {
               userId: userID,
             });
 
@@ -124,7 +124,7 @@ const AgendarScreen = ({ userID }) => {
 
           // Solicitud HTTP para enviar correo electrónico
           try {
-            const response = await axios.post('http://192.168.0.5:8080/enviar-correo', {
+            const response = await axios.post('http://192.168.100.7:8080/enviar-correo', {
               motivoConsulta,
               modoReunion: selectedModoReunion,
             });
@@ -152,7 +152,7 @@ const AgendarScreen = ({ userID }) => {
     try {
       console.log('Obtener asesores se llamó.'); // Agrega esta línea
       console.log('Motivo de consulta a enviar:', motivoConsulta);
-      const response = await axios.post('http://192.168.0.5:8080/obtener-asesores', {
+      const response = await axios.post('http://192.168.100.7:8080/obtener-asesores', {
         motivoConsulta,
       });
   

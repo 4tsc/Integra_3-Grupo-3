@@ -33,6 +33,7 @@
     "react-native-gifted-chat": "^2.4.0",
     "react-native-modal": "^13.0.1",
     "react-native-web": "~0.19.6",
+    "react-native-webview": "^13.6.2",
     "sendgrid": "^5.2.3"
   },
   "devDependencies": {

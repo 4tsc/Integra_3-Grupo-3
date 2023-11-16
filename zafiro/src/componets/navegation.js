@@ -90,14 +90,14 @@ const Navegador = () => {
       </Stack.Navigator>
 
       {/* Botón de chat solo visible después de iniciar sesión */
-      isLoggedIn && userId && !isModalVisible && (
+       (
         <TouchableOpacity style={styles.floatingButton} onPress={toggleModal}>
           <Text style={styles.buttonText}>Chat</Text>
         </TouchableOpacity>
       )}
       <Modal isVisible={isModalVisible}>
         <Button title="Cerrar" onPress={toggleModal} />
-        <ChatScreen />
+        <ChatScreen userId={userId} />
       </Modal>
     </View>
   );

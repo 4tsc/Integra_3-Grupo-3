@@ -2,50 +2,66 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, TextInput, Image, StatusBar } from 'react-native';
 import { styles_log } from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
-import * as Crypto from 'expo-crypto';
 
-const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
+const Log_in = ({ onLogin }) => {
   const [text, setText] = useState('');
   const [text2, setText2] = useState('');
   const navigation = useNavigation();
 
   const handlePress1 = () => {
-    onLogin(); // Llama a la función onLogin para indicar que el usuario ha iniciado sesión
+    onLogin();
     navigation.navigate('PrincipalScreen');
   };
 
   const handlePress = async () => {
-    const data = {
-      correo: text,
-      contraseña: text2,
-    };
-
     try {
-      const response = await fetch('http://192.168.0.5:8080/auth', {
+      const data = {
+        correo: text,
+        contraseña: text2,
+      };
+  
+      const responseAsesor = await fetch('http://192.168.100.7:8080/auth_asesor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
-
-      if (response.status === 200) {
-        const responseData = await response.json(); // Parsea la respuesta JSON
-        const userId = responseData.id; // Obtiene el ID del usuario
-
-        // mensaje por consola con el ID del usuario
-        console.log('Autenticación exitosa. ID del usuario:', userId);
-
-        onLogin(userId); // Llama a onLogin con el ID del usuario
-        navigation.navigate('PrincipalScreen');
+  
+      if (responseAsesor.status === 200) {
+        try {
+          const responseData = await responseAsesor.json();
+          const userId = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
+  
+          console.log('Autenticación exitosa. ID de usuario:', userId);
+  
+          onLogin();
+          navigation.navigate('PrincipalScreen');
+        } catch (jsonError) {
+          console.error('Error al parsear respuesta JSON del asesor:', jsonError);
+        }
       } else {
-        // Manejar la respuesta de autenticación fallida aquí
-        // Puedes mostrar un mensaje de error o realizar otras acciones
+        const responseUsuario = await fetch('http://192.168.100.7:8080/auth_usuario', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+  
+        if (responseUsuario.status === 200) {
+          onLogin();
+          navigation.navigate('PrincipalScreen');
+        } else {
+          const errorData = await responseUsuario.json();
+          console.error('Error de autenticación:', errorData.mensaje);
+        }
       }
     } catch (error) {
-      // Manejar errores de red u otros errores aquí
+      console.error('Error de red u otros errores:', error.message);
     }
   };
+  
 
   return (
     <View style={styles_log.container}>
