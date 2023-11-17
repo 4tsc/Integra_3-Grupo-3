@@ -8,8 +8,8 @@ import ListarScreen from './ListarScreen';
 
 const Tab = createBottomTabNavigator();
 
-function PrincipalScreen({ userId, userType, onLogout }) {
-  console.log(userId, userType)
+function PrincipalScreen({ userId, onLogout }) {
+  console.log(userId.userId, userId.userType )
   return (
     <Tab.Navigator>
       <Tab.Screen

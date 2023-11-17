@@ -27,12 +27,14 @@ const Log_in = ({ onLogin }) => {
       if (responseAsesor.status === 200) {
         try {
           const responseData = await responseAsesor.json();
-          const userId_asesor = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
+          const userId = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
+          var userType = responseData.tipoUsuario;
 
-          console.log('Autenticación exitosa. ID de asesor:', userId_asesor);
+          console.log(userType, 'login');
+          console.log('Autenticación exitosa. ID de asesor:', userId);
 
-          onLogin(userId_asesor);
-          navigation.navigate('PrincipalScreen', { userId_asesor });
+          onLogin({ userId, userType });
+          navigation.navigate('PrincipalScreen');
         } catch (jsonError) {
           console.error('Error al parsear respuesta JSON del asesor:', jsonError);
         }
@@ -47,12 +49,14 @@ const Log_in = ({ onLogin }) => {
 
         if (responseUsuario.status === 200) {
           const responseData = await responseUsuario.json();
-          const userId_usuario = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
+          const userId = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
+          const userType = responseData.tipoUsuario;
 
-          console.log('Autenticación exitosa. ID de Usuario:', userId_usuario);
+          console.log('Autenticación exitosa. ID de Usuario:', userId);
 
-          onLogin(userId_usuario); // Puedes pasar información específica del usuario si es necesario
-          navigation.navigate('PrincipalScreen', { userId_usuario });
+          onLogin({ userId, userType }); // Puedes pasar información específica del usuario si es necesario
+          console.log(userType);
+          navigation.navigate('PrincipalScreen');
         } else {
           const errorData = await responseUsuario.json();
           console.error('Error de autenticación:', errorData.mensaje);
