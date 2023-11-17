@@ -8,10 +8,6 @@ const Log_in = ({ onLogin }) => {
   const [text2, setText2] = useState('');
   const navigation = useNavigation();
 
-  const handlePress1 = () => {
-    onLogin();
-    navigation.navigate('PrincipalScreen');
-  };
 
   const handlePress = async () => {
     try {
@@ -19,7 +15,7 @@ const Log_in = ({ onLogin }) => {
         correo: text,
         contraseña: text2,
       };
-  
+
       const responseAsesor = await fetch('http://192.168.100.7:8080/auth_asesor', {
         method: 'POST',
         headers: {
@@ -27,16 +23,16 @@ const Log_in = ({ onLogin }) => {
         },
         body: JSON.stringify(data),
       });
-  
+
       if (responseAsesor.status === 200) {
         try {
           const responseData = await responseAsesor.json();
-          const userId = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
-  
-          console.log('Autenticación exitosa. ID de usuario:', userId);
-  
-          onLogin();
-          navigation.navigate('PrincipalScreen');
+          const userId_asesor = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
+
+          console.log('Autenticación exitosa. ID de asesor:', userId_asesor);
+
+          onLogin(userId_asesor);
+          navigation.navigate('PrincipalScreen', { userId_asesor });
         } catch (jsonError) {
           console.error('Error al parsear respuesta JSON del asesor:', jsonError);
         }
@@ -48,10 +44,15 @@ const Log_in = ({ onLogin }) => {
           },
           body: JSON.stringify(data),
         });
-  
+
         if (responseUsuario.status === 200) {
-          onLogin();
-          navigation.navigate('PrincipalScreen');
+          const responseData = await responseUsuario.json();
+          const userId_usuario = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
+
+          console.log('Autenticación exitosa. ID de Usuario:', userId_usuario);
+
+          onLogin(userId_usuario); // Puedes pasar información específica del usuario si es necesario
+          navigation.navigate('PrincipalScreen', { userId_usuario });
         } else {
           const errorData = await responseUsuario.json();
           console.error('Error de autenticación:', errorData.mensaje);
@@ -61,7 +62,6 @@ const Log_in = ({ onLogin }) => {
       console.error('Error de red u otros errores:', error.message);
     }
   };
-  
 
   return (
     <View style={styles_log.container}>

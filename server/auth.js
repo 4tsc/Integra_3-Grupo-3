@@ -103,8 +103,8 @@ app.post('/auth_asesor', async (req, res) => {
     const [rows] = await connection.execute('SELECT * FROM asesor WHERE correo = ? AND pass = ?', [correo, contraseña]);
 
     if (rows.length === 1) {
-      const userId = rows[0].id_asesor; // Obtiene el ID del usuario
-      console.log('ID de usuario obtenido:', userId); // Agrega esta línea para imprimir el ID
+      const userId_asesor = rows[0].id_asesor; // Obtiene el ID del usuario
+      console.log('ID de asesor obtenido:', userId_asesor); // Agrega esta línea para imprimir el ID
       res.status(200).json({ mensaje: 'Autenticación exitosa', userId: rows[0].id_asesor, tipoUsuario: 'asesor' });
     } else {
       res.status(401).json({ mensaje: 'Autenticación fallida' });
