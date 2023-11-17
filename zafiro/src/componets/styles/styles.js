@@ -159,17 +159,26 @@ const styles_menu = StyleSheet.create({
     flexDirection: 'row', // Configura el diseño de la vista para que los elementos estén en una fila horizontal.
     justifyContent: 'center', // Centra horizontalmente los elementos en la fila.
   },
-  panelContainer: {
-    borderRadius: 15,
-    overflow: 'hidden',
-    backgroundColor: '#ffffff',
-    margin: 10,
-    width: 300, // Puedes ajustar el ancho del panel según tus necesidades
-    height: 400, // Puedes ajustar la altura del panel según tus necesidades
-    position: 'absolute', // Cambia a 'relative' si quieres posicionarlo respecto al flujo normal del documento
-    top: 50, // Ajusta la posición superior según tus necesidades
-    left: 20, // Ajusta la posición izquierda según tus necesidades
+  ImageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 30,
   },
+  Image: {
+    width: 225, // Ajusta el ancho de la imagen según tus necesidades
+    height: 125, // Ajusta la altura de la imagen según tus necesidades
+    borderRadius: 25, // Para hacer la imagen circular (ajusta según sea necesario)
+    resizeMode: 'contain', // Ajusta la imagen al contenedor
+    marginTop: 10,
+  },
+  Certificado:{
+    width: 200, // Ajusta el ancho de la imagen según tus necesidades
+    height: 125, // Ajusta la altura de la imagen según tus necesidades
+    borderRadius: 25, // Para hacer la imagen circular (ajusta según sea necesario)
+    resizeMode: 'contain', // Ajusta la imagen al contenedor
+    marginTop: 10,
+  }
+ 
 });
 
 
