@@ -8,7 +8,7 @@ const AppButton = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const scrollViewRef = useRef();
 
-  // Function to scroll to the next image
+  // Funcion del scroll para la siguinte imagen
   const scrollToNextImage = () => {
     const newImageIndex = (currentImageIndex + 1) % carouselItems.length;
     setCurrentImageIndex(newImageIndex);
@@ -20,9 +20,9 @@ const AppButton = () => {
   useEffect(() => {
     const scrollInterval = setInterval(() => {
       scrollToNextImage();
-    }, 5000); // Change the interval (in milliseconds) as desired
+    }, 5000); // Cambia el intervalo (en milisegundos)
 
-    // Clear the interval when the component unmounts
+    // Limpiar el intervalo cuando el componente se desmonta
     return () => {
       clearInterval(scrollInterval);
     };
@@ -58,7 +58,7 @@ const AppButton = () => {
   const menuItems = [
     { title: 'Agendar Asesoria', imageSource: require('../componets/images/asesoria.png'), screenName: 'Agendar' },
     { title: 'Recursos', imageSource: require('../componets/images/recursos.png'), screenName: 'Recursos' },
-    { title: 'DTE', imageSource: require('../componets/images/Logo_UCT.png'), screenName: 'DTE' },
+    { title: 'DTE', imageSource: require('../componets/images/Logo_UCT_2.png'), screenName: 'DTE' },
     { title: 'Kintun', imageSource: require('../componets/images/bandera.png'), screenName: 'Kintun' },
     { title: 'Inkatun', imageSource: require('../componets/images/inkatun.png'), screenName: 'Inkatun' },
     { title: 'Academicos', imageSource: require('../componets/images/academico.png'), screenName: 'Academicos' },
@@ -72,17 +72,18 @@ const AppButton = () => {
         source={item.imageSource}
         style={{
           width: windowWidth,
-          height: 100,
+          height: 200,
           resizeMode: 'stretch',
+          borderRadius: 30,
         }}
       />
     </View>
   );
 
   const carouselItems = [
-    { imageSource: require('../componets/images/UCT_logo.png') },
-    { imageSource: require('../componets/images/prueba_2.jpg') },
-    { imageSource: require('../componets/images/prueba_3.jpg') },
+    { imageSource: require('../componets/images/inclusivo.jpg') },
+    { imageSource: require('../componets/images/tela.jpg') },
+    { imageSource: require('../componets/images/tierra.jpg') },
   ];
 
   const windowWidth = Dimensions.get('window').width;
@@ -100,11 +101,24 @@ const AppButton = () => {
       </View>
     </TouchableOpacity>
   );
-  
-  
 
+  const renderButtons = (startIndex, endIndex) => {
+    return menuItems.slice(startIndex, endIndex).map((item, index) => (
+      <TouchableOpacity key={index} onPress={() => handleImagePress(item.screenName)}>
+        <View style={[styles_menu.circularItem, { marginTop: index === 0 ? 10 : 20, marginLeft: index > 0 ? 20 : 0 }]}>
+          <Image source={item.imageSource} style={styles_menu.circularImage} />
+          <Text style={styles_menu.itemTitle}>{item.title}</Text>
+        </View>
+      </TouchableOpacity>
+    ));
+  };
+  
+  
+//flex: 1, justifyContent: 'center', alignItems: 'center'   //, si borro esto vuelve aparecer el panel
   return (
-    <View>
+    // Contenedor principal que centra todo el contenido en la pantalla
+    <View > 
+      {/* Sección de las imágenes en un ScrollView */}
       <ScrollView
         ref={scrollViewRef}
         horizontal
@@ -112,20 +126,39 @@ const AppButton = () => {
         onScroll={handleScroll}
         showsHorizontalScrollIndicator={false}
       >
+        {/* Mapeo de las imágenes en el ScrollView */}
         {carouselItems.map((item, index) => (
           <CarouselItem key={index} item={item} />
         ))}
       </ScrollView>
-
-      <FlatList
-        data={menuItems}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.title}
-        numColumns={2}
-        columnWrapperStyle={styles_menu.row}
-      />
+  
+      {/* Sección de los botones en un View */}
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginTop: 80 }}>
+        {/* Fila superior con los tres primeros botones */}
+        {menuItems.slice(0, 3).map((item, index) => (
+          <TouchableOpacity key={index} onPress={() => handleImagePress(item.screenName)}>
+            {/* Botón circular con imagen y título */}
+            <View style={styles_menu.circularItem}>
+              <Image source={item.imageSource} style={styles_menu.circularImage} />
+              <Text style={styles_menu.itemTitle}>{item.title}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+  
+        {/* Fila inferior con el resto de los botones */}
+        {menuItems.slice(3).map((item, index) => (
+          <TouchableOpacity key={index} onPress={() => handleImagePress(item.screenName)}>
+            {/* Botón circular con imagen y título */}
+            <View style={[styles_menu.circularItem, { marginTop: 20, flexDirection: 'column', alignItems: 'center' }]}>
+              <Image source={item.imageSource} style={styles_menu.circularImage} />
+              <Text style={styles_menu.itemTitle}>{item.title}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
+  
 };
 
 export default AppButton;
