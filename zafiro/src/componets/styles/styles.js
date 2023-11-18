@@ -94,34 +94,53 @@ const styles_Principal = StyleSheet.create({
 })
 const styles_Agendar = StyleSheet.create({
   container: {
+    flex: 5, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    marginTop: '10',
+    marginBottom: '10',
+  },
+  container2: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    marginTop: '6%',
+    marginBottom: '6%',
+  },
+  container3:{
+    backgroundColor: '#d3d1d1',
+    borderWidth: 1, // Ancho del borde
+    borderColor: 'black', // Color del borde
+  },
+  TextA:{
+    borderWidth: 1, // Ancho del borde
+    borderColor: 'black', // Color del borde
+  },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 150, 
+    height: 40, 
+    borderRadius:20,
+  },
+  pickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  picker: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    height: 40,
+    marginLeft: 10,
   },
-  pickerBox: {
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "gray",
-    padding: 10,
-    marginBottom: 20,
-  },
-  selectedDateTime: {
-    marginTop: 10,
-    fontSize: 16,
-  },
-  advisorPicker: {
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "gray",
-    padding: 10,
-    marginBottom: 20,
-  },
-  advisorButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 10,
-  },
+  label: {
+    marginRight: 10,
+  }
 });
 const styles_menu = StyleSheet.create({
   circularItem: {

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Alert, TextInput, FlatList } from 'react-native';
+import { View, Text, Button, Alert, TouchableOpacity, FlatList, SafeAreaView, ScrollView  } from 'react-native';
 import DatePicker from '@react-native-community/datetimepicker';
 import TimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import * as Calendar from 'expo-calendar';
 import axios from 'axios';
-import { styles_Horas } from '../styles/styles';
+import { styles_Agendar } from '../styles/styles';
 
 const AgendarScreen = ({ userId }) => {
   const [selectedAsesor, setSelectedAsesor] = useState({ id_asesor: null, nombre: null });
@@ -17,8 +17,11 @@ const AgendarScreen = ({ userId }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [motivoConsulta, setMotivoConsulta] = useState('');
-  const [modoReunion, setModoReunion] = useState('Presencial');
+  const [showAgendarButton, setShowAgendarButton] = useState(false); // Nuevo estado para controlar la visibilidad del botón "Agendar Asesoría"
   const [selectedModoReunion, setSelectedModoReunion] = useState('Presencial');
+  const [buttonColor, setButtonColor] = useState('#23c0eb'); // Estado para el color del botón
+  const [timeButtonColor, setTimeButtonColor] = useState('#23c0eb'); // Estado para el color del botón de la hora
+  const [modoReunionColor, setModoReunionColor] = useState('#23c0eb'); // Estado para el color del modo de reunión
 
   const motivoConsultaOptions = [
     'Virtualización',
@@ -37,6 +40,7 @@ const AgendarScreen = ({ userId }) => {
 
   const getCalendars = async () => {
     try {
+      console.log('Autenticación exitosa. ID del usuario en agenda:', userId);
       const { status } = await Calendar.requestCalendarPermissionsAsync();
 
       if (status === 'granted') {
@@ -55,9 +59,32 @@ const AgendarScreen = ({ userId }) => {
     const selectedCalendar = calendars.find((calendar) => calendar.id === calendarId);
     return selectedCalendar ? selectedCalendar.title : 'Desconocido';
   };
-
   const addEventToCalendar = async () => {
-    if (selectedCalendarId && eventDate && eventTime && selectedAsesor.id_asesor) {
+    if (!selectedCalendarId) {
+      Alert.alert('Falta seleccionar el calendario', 'Por favor, selecciona un calendario.');
+      return;
+    }
+  
+    if (!eventDate) {
+      Alert.alert('Falta seleccionar la fecha', 'Por favor, selecciona una fecha.');
+      return;
+    }
+  
+    if (!eventTime) {
+      Alert.alert('Falta seleccionar la hora', 'Por favor, selecciona una hora.');
+      return;
+    }
+  
+    if (!selectedAsesor.id_asesor) {
+      Alert.alert('Falta seleccionar un asesor', 'Por favor, selecciona un asesor.');
+      return;
+    }
+  
+    if (motivoConsulta === 'Seleccionar un motivo') {
+      Alert.alert('Falta seleccionar el motivo de consulta', 'Por favor, selecciona un motivo de consulta.');
+      return;
+    }
+    if (selectedCalendarId && eventDate && eventTime && selectedAsesor.id_asesor && motivoConsulta.trim() !== '') {
       try {
         const selectedDateTime = new Date(eventDate);
         selectedDateTime.setHours(eventTime.getHours());
@@ -167,6 +194,7 @@ const AgendarScreen = ({ userId }) => {
         }));
         setAsesores(asesoresObtenidos);
         console.log('Asesores obtenidos:', asesoresObtenidos);
+        setShowAgendarButton(true);
       } else {
         console.error('Error al obtener asesores');
         Alert.alert('Error', 'No se pudieron obtener los asesores.');
@@ -183,14 +211,18 @@ const AgendarScreen = ({ userId }) => {
 
   const hideDatePickerModal = () => {
     setShowDatePicker(false);
+    setButtonColor('#8e8c84'); // Cambiar el color del botón después de seleccionar la fecha
   };
+
 
   const showTimePickerModal = () => {
     setShowTimePicker(true);
+    setTimeButtonColor('#'); // Cambiar el color del botón al mostrar el selector de hora
   };
 
   const hideTimePickerModal = () => {
     setShowTimePicker(false);
+    setTimeButtonColor('#8e8c84'); // Restaurar el color del botón después de seleccionar la hora
   };
 
   const onDateChange = (event, selectedDate) => {
@@ -214,6 +246,7 @@ const AgendarScreen = ({ userId }) => {
 
   return (
     <View>
+
       <Text>Selecciona un calendario:</Text>
       <Picker
         selectedValue={selectedCalendarId}
@@ -224,7 +257,12 @@ const AgendarScreen = ({ userId }) => {
         ))}
       </Picker>
 
-      <Button title="Seleccionar Fecha" onPress={showDatePickerModal} />
+      <View style={styles_Agendar.container2} >
+        <TouchableOpacity onPress={showDatePickerModal} style={[styles_Agendar.button, { backgroundColor: buttonColor }]}>
+          <Text>Seleccionar Fecha</Text>
+        </TouchableOpacity>
+      </View>
+      
       {showDatePicker && (
         <DatePicker
           value={eventDate || new Date()}
@@ -235,8 +273,11 @@ const AgendarScreen = ({ userId }) => {
           maximumDate={new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)}
         />)
       }
-
-      <Button title="Seleccionar Hora" onPress={showTimePickerModal}  />
+      <View style={styles_Agendar.container2}>
+        <TouchableOpacity onPress={showTimePickerModal} style={[styles_Agendar.button, { backgroundColor: timeButtonColor }]}>
+          <Text>Seleccionar Hora</Text>
+        </TouchableOpacity>
+      </View>
       {showTimePicker && (
           <View>
             <Button title="14:00" onPress={() => selectSpecificTime(14, 0)} />
@@ -246,47 +287,77 @@ const AgendarScreen = ({ userId }) => {
           </View>
       )}
 
-      <Button title="Obtener Calendarios" onPress={getCalendars} />
+      <View style={styles_Agendar.container2}>
+          <TouchableOpacity onPress={getCalendars} style={[styles_Agendar.button, { backgroundColor: buttonColor }]}>
+            <Text>Obtener Calendarios</Text>
+          </TouchableOpacity>
+      </View>
 
-      <Text>Modo de Reunión:</Text>
+      <View style={[styles_Agendar.pickerContainer, { backgroundColor: modoReunionColor }]}>
+      <Text style={styles_Agendar.label}>Modo de Reunión:</Text>
       <Picker
         selectedValue={selectedModoReunion}
-        onValueChange={(value) => setSelectedModoReunion(value)}
+        onValueChange={(value) => {
+          setSelectedModoReunion(value);
+          setModoReunionColor(value === 'Presencial' || value === 'Virtual' ? '#8e8c84' : '#23c0eb');
+          // Cambia a #8e8c84 cuando se seleccione una opción (Presencial o Virtual), de lo contrario, mantiene el color verde
+        }}
+        style={styles_Agendar.picker}
       >
         <Picker.Item label="Presencial" value="Presencial" />
         <Picker.Item label="Virtual" value="Virtual" />
       </Picker>
+      </View>
 
-      <Text>Motivo de Consulta:</Text>
-      <Picker
-        selectedValue={motivoConsulta}
-        onValueChange={(value) => {
-          console.log('Motivo de consulta seleccionado:', value);
-          setMotivoConsulta(value);
-        }}
+      <View style={[styles_Agendar.pickerContainer, { backgroundColor: motivoConsulta !== '' ? '#8e8c84' : '#23c0eb' }]}>
+        <Text style={styles_Agendar.label}>Motivo de Consulta:</Text>
+        <Picker
+          selectedValue={motivoConsulta}
+          onValueChange={(value) => {
+            console.log('Motivo de consulta seleccionado:', value);
+            setMotivoConsulta(value);
+          }}
+          style={styles_Agendar.picker} // Estilos para el Picker
+          itemStyle={{ backgroundColor: motivoConsulta !== '' ? '#8e8c84' : '#23c0eb' }} // Cambia el color de los items del Picker
       >
         {motivoConsultaOptions.map((option) => (
           <Picker.Item key={option} label={option} value={option} />
         ))}
       </Picker>
+      </View>
 
-      <Button title="Obtener Asesores" onPress={obtenerAsesores} />
+      <View style={styles_Agendar.container2}>
+        <TouchableOpacity onPress={obtenerAsesores} style={[styles_Agendar.button, { backgroundColor: buttonColor }]}>
+          <Text>Obtener Asesores</Text>
+        </TouchableOpacity>
+      </View>
 
-      <Text>Lista de Asesores:</Text>
+      {showAgendarButton && (
+        <View style={styles_Agendar.container2}>
+          <TouchableOpacity onPress={addEventToCalendar} style={[styles_Agendar.button, { backgroundColor: buttonColor }]}>
+            <Text>Agendar Asesoría</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      <View style={styles_Agendar.container3}>
+      {/* Flatlist */}
+      <Text style={styles_Agendar.TextA}>Lista de Asesores:</Text>
       {asesores.length > 0 && (
         <FlatList
           data={asesores}
           keyExtractor={(item) => item.id_asesor.toString()}
           renderItem={({ item }) => (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, marginVertical: 8 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: '15%', marginVertical: '4%'}}>
               <Text>{item.nombre}</Text>
               <Button title="Elegir" onPress={() => setSelectedAsesor({ id_asesor: item.id_asesor, nombre: item.nombre })} />
             </View>
           )}
         />
       )}
-      <Button title="Agregar Evento" onPress={addEventToCalendar} />
-    </View>
+      </View>
+
+
+    </View >
   );
 };
 
