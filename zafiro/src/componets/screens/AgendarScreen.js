@@ -8,7 +8,7 @@ import axios from 'axios';
 import { styles_Agendar } from '../styles/styles';
 
 const AgendarScreen = ({ userId }) => {
-  const [selectedAsesor, setSelectedAsesor] = useState({ id_asesor: null, nombre: null });
+  const [selectedAsesor, setSelectedAsesor] = useState({ id_asesor: null, nombre: null, correo: null });
   const [asesores, setAsesores] = useState([]);
   const [calendars, setCalendars] = useState([]);
   const [selectedCalendarId, setSelectedCalendarId] = useState(null);
@@ -41,12 +41,15 @@ const AgendarScreen = ({ userId }) => {
   }, []);
 
   const obtenerNombreUsuario = async () => {
+    console.log("obteniendo nombre...")
+    console.log("probando en ", userId.userId)
     try {
-      const response = await axios.get(`http://192.168.0.4:8080/obtener-nombre-usuario/${userId}`);
+      const response = await axios.get(`http://192.168.0.4:8080/obtener-nombre-usuario/${userId.userId}`);
 
       if (response.status === 200) {
         const nombreUsuario = response.data.nombre;
         setNombreUsuario(nombreUsuario);
+        console.log('username: ', nombreUsuario)
       } else {
         console.error('Error al obtener el nombre del usuario');
         Alert.alert('Error', 'No se pudo obtener el nombre del usuario.');
@@ -59,7 +62,7 @@ const AgendarScreen = ({ userId }) => {
 
   const getCalendars = async () => {
     try {
-      console.log('Autenticación exitosa. ID del usuario en agenda:', userId);
+      console.log('Autenticación exitosa. ID del usuario en agenda:', userId.userId);
       const { status } = await Calendar.requestCalendarPermissionsAsync();
 
       if (status === 'granted') {
@@ -132,11 +135,11 @@ const AgendarScreen = ({ userId }) => {
           console.log('Evento creado en el calendario:', calendarName);
           console.log('Evento creado con éxito. ID del evento:', eventId);
           console.log("id asesor: ", selectedAsesor.id_asesor);
-          console.log("id usuarioL:", userId);
+          console.log("id usuario:", userId.userId);
 
           try {
             const response = await axios.post('http://192.168.0.4:8080/crear-hora', {
-              idUsuario: userId,
+              idUsuario: userId.userId,
               idAsesor: selectedAsesor.id_asesor,
               fecha: eventDate,
               hora: eventTime.toLocaleTimeString(),
@@ -172,6 +175,7 @@ const AgendarScreen = ({ userId }) => {
           }
 
           try {
+            console.log(selectedAsesor.correo)
             const response = await axios.post('http://192.168.0.4:8080/enviar-correo', {
               especialidad: motivoConsulta,
               nombreAsesor: selectedAsesor,

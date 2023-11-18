@@ -23,26 +23,30 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-app.get('/obtener-nombre-usuario/:userId', (req, res) => {
+app.get('/obtener-nombre-usuario/:userId', async (req, res) => {
+  const connection = await pool.getConnection();
   const userId = req.params.userId;
 
-  // Realiza una consulta SQL para obtener el nombre del usuario por userID
-  const sql = `SELECT nombre FROM usuario WHERE id_usuario = ?`;
+  try {
+    // Realiza una consulta SQL para obtener el nombre del usuario por userID
+    const [rows] = await connection.execute('SELECT nombre FROM usuario WHERE id_usuario = ?', [userId]);
 
-  db.query(sql, [userId], (err, result) => {
-    if (err) {
-      console.error('Error al ejecutar la consulta SQL:', err);
-      res.status(500).json({ error: 'Error interno del servidor' });
+    if (rows.length > 0) {
+      const nombreUsuario = rows[0].nombre;
+      console.log('Nombre de usuario obtenido:', nombreUsuario);
+      res.status(200).json({ nombre: nombreUsuario });
     } else {
-      if (result.length > 0) {
-        const nombreUsuario = result[0].nombre;
-        res.status(200).json({ nombre: nombreUsuario });
-      } else {
-        res.status(404).json({ error: 'Usuario no encontrado' });
-      }
+      res.status(404).json({ error: 'Usuario no encontrado' });
     }
-  });
+  } catch (error) {
+    console.error('Error al ejecutar la consulta SQL:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  } finally {
+    // Asegúrate de liberar la conexión después de su uso
+    connection.release();
+  }
 });
+
 
 app.post('/enviar-correo', (req, res) => {
   // Extrae los datos necesarios del cuerpo de la solicitud
@@ -116,7 +120,6 @@ const HTMLDocente = `
 });
 
 // Endpoint para autenticación
-// Endpoint para autenticación
 app.post('/auth_asesor', async (req, res) => {
   const { correo, contraseña } = req.body;
 
@@ -167,7 +170,7 @@ app.post('/obtener-asesores', async (req, res) => {
     // La conexión a la base de datos se obtuvo correctamente
     console.log('Conexión a la base de datos exitosa');
 
-    const sql = `SELECT id_asesor, nombre FROM asesor WHERE area LIKE '%${motivoConsulta}%';`;
+    const sql = `SELECT id_asesor, nombre, correo FROM asesor WHERE area LIKE '%${motivoConsulta}%';`;
 
     const [rows] = await connection.query(sql);
 
@@ -230,7 +233,7 @@ app.get('/horas/:id', async (req, res) => {
 app.post('/crear-hora', async (req, res) => {
   try {
     const { idUsuario, idAsesor, fecha, hora, descripcion } = req.body;
-
+    console.log('req.body:', req.body);
     // Ensure that all required fields are present
     if (!idUsuario || !idAsesor || !fecha || !hora || !descripcion) {
       return res.status(400).json({ error: 'Missing required fields' });
