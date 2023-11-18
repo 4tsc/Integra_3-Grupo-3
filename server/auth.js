@@ -23,23 +23,37 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
+app.get('/obtener-nombre-usuario/:userId', (req, res) => {
+  const userId = req.params.userId;
+
+  // Realiza una consulta SQL para obtener el nombre del usuario por userID
+  const sql = `SELECT nombre FROM usuario WHERE id_usuario = ?`;
+
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error('Error al ejecutar la consulta SQL:', err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    } else {
+      if (result.length > 0) {
+        const nombreUsuario = result[0].nombre;
+        res.status(200).json({ nombre: nombreUsuario });
+      } else {
+        res.status(404).json({ error: 'Usuario no encontrado' });
+      }
+    }
+  });
+});
+
 app.post('/enviar-correo', (req, res) => {
-
-  //Constantes para Correos
-  const nombreAsesor = 'Juanin Juan Jarris';
-  const nombreDocente = 'john jonah jameson';
-  const fecha = '30/02/21';
-  const hora = '14:00';
-  const Asunto = 'Insertar Asunto';
-  const CorreoAsesor = 'c.a.ulloa.vera@gmail.com';
-  const CorreoDocente = 'carlos.ulloa2020@alu.uct.cl';
-
-//HTML de correos
+  // Extrae los datos necesarios del cuerpo de la solicitud
+  const { especialidad, nombreAsesor,nombreDocente,fecha,hora,correoDocente,correoAsesor } = req.body;
+  console.log('Especialidad recibida en el servidor:', especialidad);
   const HTMLAsesor = `
     <html>
     <body>
         <p>Estimado ${nombreAsesor},</p>
-        <p>Le informamos que el Docente <b>${nombreDocente}</b> agendó una hora de consulta para el día ${fecha} a las ${hora} hrs con asunto: ${Asunto}.
+        <p>Le informamos que el Docente <b>${nombreDocente}</b> agendó una hora de consulta para el día ${fecha} 
+        a las ${hora} hrs buscando ayuda en la especialidad: ${especialidad}.
         </p>
         <p>Atentamente,<br>
         <b>Una persona Equis</b><br>
@@ -53,36 +67,38 @@ app.post('/enviar-correo', (req, res) => {
         </p>
     </body>
     </html>
-  `;
-  const HTMLDocente = `
-    <html>
-    <body>
-        <p>Estimado <b>${nombreDocente}</b>,</p>
-        <p>Le informamos que su reserva de hora para la Consulta con el Asesor <b>${nombreAsesor}</b> se agendó correctamente para el día ${fecha} a las ${hora} hrs sobre el asunto: ${Asunto}.
-        </p>
-        <p>Atentamente,<br>
-        <b>Una persona Equis</b><br>
-        Universidad Católica de Temuco<br>
-        Campus San Juan Pablo II<br>
-        Rudecindo Ortega 02950<br>
-        Temuco - Chile <br>
-        Fono: +56 452 205 453<br>
-        https://dte.uct.cl/ <br>
-        <img src="https://recursos.uct.cl/wp-content/uploads/2016/04/UCT_logo.png" alt="Descripción" width="200" height="100">
-        </p>
-    </body>
-    </html>
-  `;
+`;
+
+const HTMLDocente = `
+<html>
+<body>
+    <p>Estimado <b>${nombreDocente}</b>,</p>
+    <p>Le informamos que su reserva de hora para la Consulta con el Asesor <b>${nombreAsesor}</b> con especialidad: 
+    <b>${especialidad}</b> se agendó correctamente para el día <b>${fecha}</b> a las ${hora} hrs.
+    </p>
+    <p>Atentamente,<br>
+    <b>Una persona Equis</b><br>
+    Universidad Católica de Temuco<br>
+    Campus San Juan Pablo II<br>
+    Rudecindo Ortega 02950<br>
+    Temuco - Chile <br>
+    Fono: +56 452 205 453<br>
+    https://dte.uct.cl/ <br>
+    <img src="https://recursos.uct.cl/wp-content/uploads/2016/04/UCT_logo.png" alt="Descripción" width="200" height="100">
+    </p>
+</body>
+</html>
+`;
 
   const msg1 = {
-    to: CorreoAsesor,
+    to: correoAsesor,
     from: 'carlos.ulloa2020@alu.uct.cl',
     subject: 'Se ha reservado una Consulta de Asesoría',
     html: HTMLAsesor,
   };
 
   const msg2 = {
-    to: CorreoDocente,
+    to: correoDocente,
     from: 'carlos.ulloa2020@alu.uct.cl',
     subject: `Se reservó una Consulta con ${nombreAsesor} para el ${fecha} a las ${hora}`,
     html: HTMLDocente,
