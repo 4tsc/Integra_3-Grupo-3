@@ -116,29 +116,43 @@ const HTMLDocente = `
 });
 
 // Endpoint para autenticación
-app.post('/auth', async (req, res) => {
+// Endpoint para autenticación
+app.post('/auth_asesor', async (req, res) => {
   const { correo, contraseña } = req.body;
-
-  console.log('Solicitud de inicio de sesión recibida:');
-  console.log('Correo:', correo);
-  console.log('Contraseña:', contraseña);
 
   try {
     const connection = await pool.getConnection();
-    const [rows] = await connection.execute('SELECT id_usuario FROM usuario WHERE correo = ? AND pass = ?', [correo, contraseña]);
-    connection.release();
+    const [rows] = await connection.execute('SELECT * FROM asesor WHERE correo = ? AND pass = ?', [correo, contraseña]);
 
     if (rows.length === 1) {
-      // Autenticación exitosa
-      const userId = rows[0].id_usuario; // Obtiene el ID del usuario
-      console.log('ID de usuario obtenido:', userId); // Agrega esta línea para imprimir el ID
-      res.status(200).json({ id: userId }); // Incluye el ID en la respuesta
+      const userId_asesor = rows[0].id_asesor; // Obtiene el ID del usuario
+      console.log('ID de asesor obtenido:', userId_asesor); // Agrega esta línea para imprimir el ID
+      res.status(200).json({ mensaje: 'Autenticación exitosa', userId: rows[0].id_asesor, tipoUsuario: 'asesor' });
     } else {
-      // Autenticación fallida
       res.status(401).json({ mensaje: 'Autenticación fallida' });
     }
   } catch (error) {
-    console.error('Error al autenticar:', error);
+    console.error('Error al autenticar asesor:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+app.post('/auth_usuario', async (req, res) => {
+  const { correo, contraseña } = req.body;
+
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.execute('SELECT * FROM usuario WHERE correo = ? AND pass = ?', [correo, contraseña]);
+
+    if (rows.length === 1) {
+      const userId = rows[0].id_usuario; // Obtiene el ID del usuario
+      console.log('ID de usuario obtenido:', userId); // Agrega esta línea para imprimir el ID
+      res.status(200).json({ mensaje: 'Autenticación exitosa', userId: rows[0].id_usuario, tipoUsuario: 'usuario' });
+    } else {
+      res.status(401).json({ mensaje: 'Autenticación fallida' });
+    }
+  } catch (error) {
+    console.error('Error al autenticar usuario:', error);
     res.status(500).json({ mensaje: 'Error interno del servidor' });
   }
 });
@@ -299,6 +313,6 @@ app.put('/users/:id', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+app.listen(port, '192.168.0.4', () => {
   console.log(`Servidor en ejecución en el puerto ${port}`);
 });

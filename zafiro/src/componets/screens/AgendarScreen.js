@@ -42,7 +42,7 @@ const AgendarScreen = ({ userId }) => {
 
   const obtenerNombreUsuario = async () => {
     try {
-      const response = await axios.get(`http://192.168.64.155:8080/obtener-nombre-usuario/${userId}`);
+      const response = await axios.get(`http://192.168.0.4:8080/obtener-nombre-usuario/${userId}`);
 
       if (response.status === 200) {
         const nombreUsuario = response.data.nombre;
@@ -135,7 +135,7 @@ const AgendarScreen = ({ userId }) => {
           console.log("id usuarioL:", userId);
 
           try {
-            const response = await axios.post('http://192.168.64.155:8080/crear-hora', {
+            const response = await axios.post('http://192.168.0.4:8080/crear-hora', {
               idUsuario: userId,
               idAsesor: selectedAsesor.id_asesor,
               fecha: eventDate,
@@ -151,7 +151,7 @@ const AgendarScreen = ({ userId }) => {
               body: 'Se ha agendado correctamente tu cita con el asesor.',
             };
 
-            const { data: token } = await axios.post('http://192.168.100.7:8080/get-notification-token', {
+            const { data: token } = await axios.post('http://192.168.0.4:8080/get-notification-token', {
               userId: userID,
             });
 
@@ -172,7 +172,7 @@ const AgendarScreen = ({ userId }) => {
           }
 
           try {
-            const response = await axios.post('http://192.168.64.155:8080/enviar-correo', {
+            const response = await axios.post('http://192.168.0.4:8080/enviar-correo', {
               especialidad: motivoConsulta,
               nombreAsesor: selectedAsesor,
               nombreDocente: nombreUsuario,
@@ -205,7 +205,7 @@ const AgendarScreen = ({ userId }) => {
     try {
       console.log('Obtener asesores se llamó.');
       console.log('Motivo de consulta a enviar:', motivoConsulta);
-      const response = await axios.post('http://192.168.64.155:8080/obtener-asesores', {
+      const response = await axios.post('http://192.168.0.4:8080/obtener-asesores', {
         motivoConsulta,
       });
 
