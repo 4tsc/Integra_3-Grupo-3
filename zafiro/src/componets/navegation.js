@@ -7,7 +7,7 @@ import Agendar from "./screens/AgendarScreen.js";
 import PrincipalScreen from "./screens/PrincipalScreen.js";
 import EliminarScreen from "./screens/EliminarScreen.js";
 import { ChatScreen } from "./screens/ChatScreen.js";
-import ListarScreen from "./screens/listarScreen.js";
+import ListarScreen from "./screens/ListarScreen"; // Importa el nuevo componente
 
 const Stack = createStackNavigator();
 
@@ -65,8 +65,11 @@ const Navegador = () => {
             headerStyle: { backgroundColor: "#01568e" },
             headerTintColor: "white",
           }}
-          component={Agendar}
-        />
+        >
+          {(props) => (
+            <Agendar {...props} userId={userId} />
+          )}
+          </Stack.Screen>
         <Stack.Screen
           name="EliminarScreen"
           options={{
@@ -97,7 +100,7 @@ const Navegador = () => {
       )}
       <Modal isVisible={isModalVisible}>
         <Button title="Cerrar" onPress={toggleModal} />
-        <ChatScreen />
+        <ChatScreen userId={userId} />
       </Modal>
     </View>
   );

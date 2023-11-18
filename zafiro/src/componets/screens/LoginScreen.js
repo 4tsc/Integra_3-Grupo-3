@@ -3,15 +3,10 @@ import { View, Text, Pressable, TextInput, Image, StatusBar } from 'react-native
 import { styles_log } from '../styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
 
-const Log_in = ({ onLogin }) => {
+const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
   const [text, setText] = useState('');
   const [text2, setText2] = useState('');
   const navigation = useNavigation();
-
-  const handlePress1 = () => {
-    onLogin();
-    navigation.navigate('PrincipalScreen');
-  };
 
   const handlePress = async () => {
     try {
@@ -19,38 +14,47 @@ const Log_in = ({ onLogin }) => {
         correo: text,
         contraseña: text2,
       };
-  
-      const responseAsesor = await fetch('http://192.168.0.6:8080/auth_asesor', {
+
+      const responseAsesor = await fetch('http://192.168.0.3:8080/auth_asesor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
-  
+
       if (responseAsesor.status === 200) {
         try {
           const responseData = await responseAsesor.json();
           const userId = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
-  
-          console.log('Autenticación exitosa. ID de usuario:', userId);
-  
-          onLogin();
+          var userType = responseData.tipoUsuario;
+
+          console.log(userType, 'login');
+          console.log('Autenticación exitosa. ID de asesor:', userId);
+
+          onLogin({ userId, userType });
           navigation.navigate('PrincipalScreen');
         } catch (jsonError) {
           console.error('Error al parsear respuesta JSON del asesor:', jsonError);
         }
       } else {
-        const responseUsuario = await fetch('http://192.168.0.6:8080/auth_usuario', {
+        const responseUsuario = await fetch('http://192.168.0.3:8080/auth_usuario', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
         });
-  
+
         if (responseUsuario.status === 200) {
-          onLogin();
+          const responseData = await responseUsuario.json();
+          const userId = responseData.userId; // Cambiado de responseData.id a responseData.tipoUsuario
+          const userType = responseData.tipoUsuario;
+
+          console.log('Autenticación exitosa. ID de Usuario:', userId);
+
+          onLogin({ userId, userType }); // Puedes pasar información específica del usuario si es necesario
+          console.log(userType);
           navigation.navigate('PrincipalScreen');
         } else {
           const errorData = await responseUsuario.json();
@@ -61,7 +65,6 @@ const Log_in = ({ onLogin }) => {
       console.error('Error de red u otros errores:', error.message);
     }
   };
-  
 
   return (
     <View style={styles_log.container}>
@@ -101,12 +104,6 @@ const Log_in = ({ onLogin }) => {
       <View style={styles_log.container5}>
         <Pressable style={styles_log.btn} onPress={handlePress}>
           <Text style={styles_log.btnText}>Iniciar Sesión</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles_log.texto3}>
-        <Pressable>
-          <Text style={styles_log.testo}>¿Olvidaste tu contraseña?</Text>
         </Pressable>
       </View>
     </View>

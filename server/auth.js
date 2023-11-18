@@ -17,14 +17,37 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   database: 'zafiro',
-  password: '1234',//eliminar esto si no estas en pc de ulloa xD
+  password: '1234',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
 
+app.get('/obtener-nombre-usuario/:userId', async (req, res) => {
+  const connection = await pool.getConnection();
+  const userId = req.params.userId;
+
+  try {
+    // Realiza una consulta SQL para obtener el nombre del usuario por userID
+    const [rows] = await connection.execute('SELECT nombre FROM usuario WHERE id_usuario = ?', [userId]);
+    if (rows.length > 0) {
+      const nombreUsuario = rows[0].nombre;
+      console.log('Nombre de usuario obtenido:', nombreUsuario);
+      res.status(200).json({ nombre: nombreUsuario });
+    } else {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al ejecutar la consulta SQL:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  } finally {
+    // Asegúrate de liberar la conexión después de su uso
+    connection.release();
+  }
+});
+
 app.post('/enviar-correo', (req, res) => {
-  // Extrae los datos necesarios del cuerpo de la solicitud
+  // Extrae los datos necesarios del cuerpo de la solicitud 
   const { especialidad, nombreAsesor,nombreDocente,fecha,hora,correoDocente,correoAsesor } = req.body;
   console.log('Especialidad recibida en el servidor:', especialidad);
   const HTMLAsesor = `
@@ -85,6 +108,7 @@ const HTMLDocente = `
 
   sgMail.send([msg1, msg2])
     .then(() => {
+      console.log('Correo Asesor:',correoAsesor,'Nombre Asesor:', nombreAsesor, 'nombre Docente:', nombreDocente)
       console.log('Correos enviados con éxito');
       res.send('Correos enviados con éxito');
     })
@@ -94,7 +118,7 @@ const HTMLDocente = `
     });
 });
 
-
+// Endpoint para autenticación
 // Endpoint para autenticación
 app.post('/auth_asesor', async (req, res) => {
   const { correo, contraseña } = req.body;
@@ -104,8 +128,8 @@ app.post('/auth_asesor', async (req, res) => {
     const [rows] = await connection.execute('SELECT * FROM asesor WHERE correo = ? AND pass = ?', [correo, contraseña]);
 
     if (rows.length === 1) {
-      const userId = rows[0].id_asesor; // Obtiene el ID del usuario
-      console.log('ID de usuario obtenido:', userId); // Agrega esta línea para imprimir el ID
+      const userId_asesor = rows[0].id_asesor; // Obtiene el ID del usuario
+      console.log('ID de asesor obtenido:', userId_asesor); // Agrega esta línea para imprimir el ID
       res.status(200).json({ mensaje: 'Autenticación exitosa', userId: rows[0].id_asesor, tipoUsuario: 'asesor' });
     } else {
       res.status(401).json({ mensaje: 'Autenticación fallida' });
@@ -133,6 +157,28 @@ app.post('/auth_usuario', async (req, res) => {
   } catch (error) {
     console.error('Error al autenticar usuario:', error);
     res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+app.post('/obtener-asesores', async (req, res) => {
+  const motivoConsulta = req.body.motivoConsulta; // Obtén el motivo de consulta desde la solicitud
+  console.log('Motivo de consulta recibido:', motivoConsulta);
+
+  try {
+    const connection = await pool.getConnection();
+
+    // La conexión a la base de datos se obtuvo correctamente
+    console.log('Conexión a la base de datos exitosa');
+
+    const sql = `SELECT * FROM asesor WHERE area LIKE '%${motivoConsulta}%';`;
+
+    const [rows] = await connection.query(sql);
+
+    // Devuelve los resultados de la consulta en formato JSON
+    res.json(rows);
+  } catch (error) {
+    console.error('Error al obtener asesores:', error);
+    res.status(500).json({ error: 'Error en la base de datos' });
   }
 });
 
@@ -185,32 +231,41 @@ app.get('/horas/:id', async (req, res) => {
 });
 
 app.post('/crear-hora', async (req, res) => {
-  const idUsuario = req.body.id; // Ajustar según sea necesario
-  const idAsesor = req.body.id_asesor;
-  const fecha = req.body.fecha;
-  const hora = req.body.hora;
-  const descripcion = req.body.descripcion; // Asumiendo que tienes un campo "descripcion" para la asesoría
-
   try {
+    const { idUsuario, idAsesor, fecha, hora, descripcion } = req.body;
+    console.log('req.body:',req.body)
+    // Ensure that all required fields are present
+    if (!idUsuario || !idAsesor || !fecha || !hora || !descripcion) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Extract date and time components
+    const fechaCortada = fecha.slice(0, 10);
+    const horaCortada = hora.slice(0, -7);
+
     const connection = await pool.getConnection();
 
-    // La conexión a la base de datos se obtuvo correctamente
-    console.log('Conexión a la base de datos exitosa');
+    try {
+      // Use parameterized query to prevent SQL injection
+      const sql = `
+        INSERT INTO horas (id_usuario, id_asesor, fecha, hora, descripcion)
+        VALUES (?, ?, ?, ?, ?);
+      `;
 
-    const sql = `
-      INSERT INTO horas (id_usuario, id_asesor, fecha, hora, descripcion)
-      VALUES (?, ?, ?, ?, ?);
-    `;
+      await connection.query(sql, [idUsuario, idAsesor, fechaCortada, horaCortada, descripcion]);
 
-    await connection.query(sql, [idUsuario, idAsesor, fecha, hora, descripcion, disponibilidad]);
-
-    // Devuelve un mensaje de éxito en formato JSON
-    res.json({ mensaje: 'Hora creada con éxito' });
+      // Return a success message in JSON format
+      res.json({ mensaje: 'Hora creada con éxito' });
+    } finally {
+      // Release the database connection
+      connection.release();
+    }
   } catch (error) {
     console.error('Error al crear hora:', error);
     res.status(500).json({ error: 'Error en la base de datos' });
   }
 });
+
 
 
 
@@ -261,28 +316,6 @@ app.put('/users/:id', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+app.listen(port, '192.168.0.3', () => {
   console.log(`Servidor en ejecución en el puerto ${port}`);
-});
-
-app.post('/obtener-asesores', async (req, res) => {
-  const motivoConsulta = req.body.motivoConsulta; // Obtén el motivo de consulta desde la solicitud
-  console.log('Motivo de consulta recibido:', motivoConsulta);
-
-  try {
-    const connection = await pool.getConnection();
-
-    // La conexión a la base de datos se obtuvo correctamente
-    console.log('Conexión a la base de datos exitosa');
-
-    const sql = `SELECT id_asesor, nombre FROM asesor WHERE area LIKE '%${motivoConsulta}%';`;
-
-    const [rows] = await connection.query(sql);
-
-    // Devuelve los resultados de la consulta en formato JSON
-    res.json(rows);
-  } catch (error) {
-    console.error('Error al obtener asesores:', error);
-    res.status(500).json({ error: 'Error en la base de datos' });
-  }
 });

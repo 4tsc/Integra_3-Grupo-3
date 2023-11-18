@@ -94,63 +94,111 @@ const styles_Principal = StyleSheet.create({
 })
 const styles_Agendar = StyleSheet.create({
   container: {
+    flex: 5, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    marginTop: '10',
+    marginBottom: '10',
+  },
+  container2: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    marginTop: '6%',
+    marginBottom: '6%',
+  },
+  container3:{
+    backgroundColor: '#d3d1d1',
+    borderWidth: 1, // Ancho del borde
+    borderColor: 'black', // Color del borde
+  },
+  TextA:{
+    borderWidth: 1, // Ancho del borde
+    borderColor: 'black', // Color del borde
+  },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 150, 
+    height: 40, 
+    borderRadius:20,
+  },
+  pickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  picker: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    height: 40,
+    marginLeft: 10,
   },
-  pickerBox: {
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "gray",
-    padding: 10,
-    marginBottom: 20,
-  },
-  selectedDateTime: {
-    marginTop: 10,
-    fontSize: 16,
-  },
-  advisorPicker: {
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "gray",
-    padding: 10,
-    marginBottom: 20,
-  },
-  advisorButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 10,
-  },
+  label: {
+    marginRight: 10,
+  }
 });
 const styles_menu = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
+  circularItem: {
     alignItems: 'center',
-    // backgroundColor: '#2196f3',
-    width: windowWidth, // Ancho igual al ancho de la pantalla
-    height: windowHeight, // Altura igual a la altura de la pantalla
+    justifyContent: 'center',
+    margin: 10,
+    backgroundColor: '#285C9B',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow: 'hidden',
+  },
+  //circularImageContainer: {
+    //width: 80,            // Establece el ancho del contenedor circular en 100 unidades (píxeles o algún otro valor de medida).
+    //height: 80,          // Establece la altura del contenedor circular en 100 unidades (píxeles u otra medida).
+    //borderRadius: 50,     // Define un radio de borde de 50 unidades, lo que crea un contenedor circular.
+    //overflow: 'hidden',   // Oculta cualquier contenido que se desborde del contenedor circular.
+    //marginBottom: 10,     // Agrega un espacio en la parte inferior del contenedor circular de 10 unidades
+  //},
+  circularImage: {
+    width: '40%', // Establece el ancho de la imagen al 100% del contenedor circular.
+    height: '40%',// Establece la altura de la imagen al 100% del contenedor circular.
+   // maxWidth: '80%', // Controla el ancho máximo de las imágenes
+   // maxHeight: '80%', // Controla la altura máxima de las imágenes
+    resizeMode: 'contain', // Configura cómo la imagen se ajusta dentro del contenedor. 'contain' permite que la imagen se ajuste dentro del contenedor sin distorsionarla.
+  },
+  itemTitle: {
+    fontSize: 14, // Establece el tamaño de fuente del título en 16 unidades (píxeles u otra medida).
+    color: 'white', // Define el color del texto del título como negro.
+    marginTop: 5, // Agrega un espacio en la parte superior del título de 5 unidades.
+    textAlign: 'center',  // Añade esta línea para centrar el texto
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: 'row', // Configura el diseño de la vista para que los elementos estén en una fila horizontal.
+    justifyContent: 'center', // Centra horizontalmente los elementos en la fila.
   },
-  item: {
-    flex: 1,
-    
+  ImageContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
-    margin: 10,
-    
+    marginBottom: 30,
   },
-  image: {
-    aspectRatio: 1,
-    width: (windowWidth * imageWidthPercentage) / 100, // Calcula el ancho según el porcentaje
-    height: (windowHeight* imageHeightPercentage)/100,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    
-    
+  Image: {
+    width: 225, // Ajusta el ancho de la imagen según tus necesidades
+    height: 125, // Ajusta la altura de la imagen según tus necesidades
+    borderRadius: 25, // Para hacer la imagen circular (ajusta según sea necesario)
+    resizeMode: 'contain', // Ajusta la imagen al contenedor
+    marginTop: 10,
   },
+  Certificado:{
+    width: 200, // Ajusta el ancho de la imagen según tus necesidades
+    height: 125, // Ajusta la altura de la imagen según tus necesidades
+    borderRadius: 25, // Para hacer la imagen circular (ajusta según sea necesario)
+    resizeMode: 'contain', // Ajusta la imagen al contenedor
+    marginTop: 10,
+  }
+ 
 });
+
 const styles_Logout = StyleSheet.create({
     container:{
         flex: 1, // Utiliza flex para ocupar todo el espacio vertical
