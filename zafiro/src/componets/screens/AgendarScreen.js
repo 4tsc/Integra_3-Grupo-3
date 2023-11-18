@@ -6,6 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as Calendar from 'expo-calendar';
 import axios from 'axios';
 import { styles_Agendar } from '../styles/styles';
+import { useNavigation } from '@react-navigation/native';
 
 const AgendarScreen = ({ userId }) => {
   const [selectedAsesor, setSelectedAsesor] = useState({ id_asesor: null, nombre: null, correo: null });
@@ -23,6 +24,7 @@ const AgendarScreen = ({ userId }) => {
   const [timeButtonColor, setTimeButtonColor] = useState('#23c0eb'); // Estado para el color del botón de la hora
   const [modoReunionColor, setModoReunionColor] = useState('#23c0eb'); // Estado para el color del modo de reunión
   const [nombreUsuario, setNombreUsuario] = useState('');
+  const navigation = useNavigation();
 
   const motivoConsultaOptions = [
     'Virtualización',
@@ -148,6 +150,7 @@ const AgendarScreen = ({ userId }) => {
             console.log('Solicitud al servidor para crear hora exitosa:', response.data);
             // Mostrar alerta después de la respuesta exitosa del endpoint crear-hora
             Alert.alert('Hora Agendada', 'La hora ha sido agendada correctamente.');
+            navigation.navigate('PrincipalScreen');
             // Agregar lógica de notificación aquí
             const notificationContent = {
               title: '¡Cita Agendada!',
