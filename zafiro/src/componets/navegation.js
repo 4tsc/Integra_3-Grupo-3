@@ -100,7 +100,7 @@ const Navegador = () => {
       )}
       <Modal isVisible={isModalVisible}>
         <Button title="Cerrar" onPress={toggleModal} />
-        <ChatScreen />
+        <ChatScreen userId={userId} />
       </Modal>
     </View>
   );

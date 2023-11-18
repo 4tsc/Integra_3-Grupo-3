@@ -9,9 +9,11 @@ import ListarScreen from './ListarScreen';
 const Tab = createBottomTabNavigator();
 
 function PrincipalScreen({ userId, onLogout }) {
-  console.log(userId)
+  console.log(userId.userId, userId.userType )
   return (
     <Tab.Navigator>
+
+      {userId.userType === 'usuario' && (
       <Tab.Screen
         name="Recursos"
         options={{
@@ -25,6 +27,7 @@ function PrincipalScreen({ userId, onLogout }) {
       >
         {() => <HomeScreen userId={userId} />}
       </Tab.Screen>
+      )}
       <Tab.Screen
         name="Listar horas"
         options={{

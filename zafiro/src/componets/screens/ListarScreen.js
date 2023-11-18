@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { View, Text, Button, FlatList } from "react-native";
 import axios from 'axios';
 
 const ListarScreen = ({ userId }) => {
   const [horas, setHoras] = useState([]);
-
+  console.log(userId.userId, 'listar');
   const handleEliminar = async (horaId) => {
     try {
       // Realiza la solicitud para eliminar la entrada con el id específico
-      await axios.delete(`http://192.168.64.155:8080/horas/${userId}/${horaId}`);
+      await axios.delete(`http://192.168.100.7:8080/horas/${userId.userId}/${horaId}`);
       
       // Actualiza el estado eliminando la entrada con el id correspondiente
       setHoras(prevHoras => prevHoras.filter(hora => hora.id !== horaId));
@@ -19,7 +20,7 @@ const ListarScreen = ({ userId }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://192.168.64.155:8080/horas/${userId}`);
+        const response = await axios.get(`http://192.168.100.7:8080/horas/${userId.userId}`);
         setHoras(response.data.rows);
         console.log('Datos recibidos:', response.data);
       } catch (error) {
@@ -31,23 +32,21 @@ const ListarScreen = ({ userId }) => {
   }, [userId]);
 
   return (
-    <div>
-      <h1>Horas del Usuario</h1>
-      <ul>
-        {horas.map((hora) => (
-          <li key={hora.id}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                <p>Fecha: {hora.fecha}</p>
-                <p>Hora: {hora.hora}</p>
-                <p>Descripción: {hora.descripcion}</p>
-              </div>
-              <button onClick={() => handleEliminar(hora.id)}>Eliminar</button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <View>
+      <Text>Horas del Usuario</Text>
+      <FlatList
+        data={horas}
+        keyExtractor={(hora) => hora.id.toString()}
+        renderItem={({ item: hora }) => (
+          <View>
+            <Text>Fecha: {hora.fecha}</Text>
+            <Text>Hora: {hora.hora}</Text>
+            <Text>Descripción: {hora.descripcion}</Text>
+            <Button title="Eliminar" onPress={() => handleEliminar(hora.id)} />
+          </View>
+        )}
+      />
+    </View>
   );
 };
 

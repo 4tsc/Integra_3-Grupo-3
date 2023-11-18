@@ -97,6 +97,29 @@ const AgendarScreen = ({ userId }) => {
               descripcion: motivoConsulta,
             });
             console.log('Solicitud al servidor para crear hora exitosa:', response.data);
+            // Mostrar alerta después de la respuesta exitosa del endpoint crear-hora
+            Alert.alert('Hora Agendada', 'La hora ha sido agendada correctamente.');
+            // Agregar lógica de notificación aquí
+            const notificationContent = {
+              title: '¡Cita Agendada!',
+              body: 'Se ha agendado correctamente tu cita con el asesor.',
+            };
+
+            const { data: token } = await axios.post('http://192.168.100.7:8080/get-notification-token', {
+              userId: userID,
+            });
+
+            if (token) {
+              const trigger = new Date(selectedDateTime.getTime() + 5 * 60 * 1000);
+              await Notifications.scheduleNotificationAsync({
+                content: notificationContent,
+                trigger,
+              });
+              console.log('Notificación programada para 5 minutos después del evento.');
+            } else {
+              console.warn('Token de notificación no disponible.');
+            }
+            
           } catch (error) {
             console.error('Error al realizar la solicitud para crear hora:', error);
             Alert.alert('Error', 'No se pudo crear la hora en la base de datos.');
