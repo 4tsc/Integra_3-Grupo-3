@@ -35,7 +35,7 @@ function PrincipalScreen({ userId, onLogout }) {
           headerStyle: { backgroundColor: '#01568e' },
           headerTintColor: 'white',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="log-out-outline" size={size} color={color} />
+            <Ionicons name="list-outline" size={size} color={color} />
           ),
         }}
       >
