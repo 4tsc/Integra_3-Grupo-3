@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -9,6 +9,10 @@ function ProfileScreen({ userId }) {
   const [isEditing, setIsEditing] = useState(false);
   const [imageBlob, setImageBlob] = useState(null);
   const [editedImage, setEditedImage] = useState(null);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [imageChanged, setImageChanged] = useState(false);
 
   const fetchUserData = async () => {
     try {
@@ -30,39 +34,51 @@ function ProfileScreen({ userId }) {
   };
 
   const handleSaveChanges = async () => {
-    // Send edited data to the server
     try {
-      const response = await fetch(`http://192.168.1.101:8080/users/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nombre: name, correo: email }),
-      });
+      const userUpdateData = { nombre: name, correo: email, pass: password };
 
-      if (response.ok) {
-        console.log('Datos del usuario actualizados con éxito.');
+      if (imageChanged) {
+        const response = await fetch(`http://192.168.1.101:8080/users/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userUpdateData),
+        });
 
-        // Si se ha seleccionado una nueva imagen, también guarda la imagen
-        if (editedImage) {
-          await handleSaveImage();
+        if (response.ok) {
+          console.log('Datos del usuario actualizados con éxito.');
+          if (editedImage) {
+            await handleSaveImage();
+          }
+        } else {
+          console.error('Error al actualizar los datos del usuario');
         }
-
-        setIsEditing(false); // Exit edit mode
-
-        // Recargar la pantalla después de confirmar los cambios
-        fetchUserData();
-        fetchImage();
       } else {
-        console.error('Error al actualizar los datos del usuario');
+        const response = await fetch(`http://192.168.1.101:8080/users/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userUpdateData),
+        });
+
+        if (response.ok) {
+          console.log('Datos del usuario actualizados con éxito.');
+        } else {
+          console.error('Error al actualizar los datos del usuario');
+        }
       }
+
+      setIsEditing(false);
+      fetchUserData();
+      fetchImage();
     } catch (error) {
       console.error('Error al actualizar los datos del usuario', error);
     }
   };
 
   const handleSaveImage = async () => {
-    // Send edited image to the server
     try {
       const formData = new FormData();
       formData.append('image', {
@@ -86,8 +102,8 @@ function ProfileScreen({ userId }) {
 
   const handleCancelEdit = () => {
     setIsEditing(false);
-    // Reset editedImage to the original imageBlob
     setEditedImage(imageBlob);
+    setImageChanged(false);
   };
 
   const pickImage = async () => {
@@ -97,16 +113,15 @@ function ProfileScreen({ userId }) {
         allowsEditing: true,
         aspect: [3, 3],
       });
-  
-      // Check for canceled and use assets array
+
       if (!pickerResult.canceled) {
         setEditedImage(pickerResult.assets[0].uri);
+        setImageChanged(true);
       }
     } catch (error) {
       console.error('Error al seleccionar la imagen:', error);
     }
   };
-  
 
   const fetchImage = async () => {
     try {
@@ -126,7 +141,7 @@ function ProfileScreen({ userId }) {
       const imageUrl = await blobToDataURL(response.data);
 
       setImageBlob(imageUrl);
-      setEditedImage(imageUrl); // Initialize editedImage with the current image
+      setEditedImage(imageUrl);
     } catch (error) {
       console.error('Error fetching image:', error);
     }
@@ -136,15 +151,21 @@ function ProfileScreen({ userId }) {
     fetchImage();
   }, []);
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Perfil de Usuario</Text>
-      <Image source={{ uri: isEditing ? editedImage : imageBlob }} style={{ width: 200, height: 200, borderRadius: 100 }} />
-      {isEditing && (
-        <View>
-          <Button title="Cambiar Imagen" onPress={pickImage} />
-        </View>
-      )}
+      <View style={styles.profileImageContainer}>
+        <Image source={{ uri: isEditing ? editedImage : imageBlob }} style={styles.profileImage} />
+        {isEditing && (
+          <TouchableOpacity style={styles.changeImageOverlay} onPress={pickImage}>
+            <Text style={styles.changeImageText}>Cambiar Imagen</Text>
+          </TouchableOpacity>
+        )}
+      </View>
       <View style={styles.field}>
         <Text style={styles.fieldLabel}>Nombre:</Text>
         {isEditing ? (
@@ -169,11 +190,33 @@ function ProfileScreen({ userId }) {
           <Text style={styles.fieldValue}>{email}</Text>
         )}
       </View>
-
+      <View style={styles.field}>
+        <Text style={styles.fieldLabel}>Contraseña:</Text>
+        {isEditing ? (
+          <View>
+            <TextInput
+              style={styles.input}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+            />
+            <TextInput
+              style={styles.input}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry={!showPassword}
+              placeholder="Confirmar Contraseña"
+            />
+            <Button title={showPassword ? 'Ocultar Contraseña' : 'Mostrar Contraseña'} onPress={toggleShowPassword} />
+          </View>
+        ) : (
+          <Text style={styles.fieldValue}>••••••••</Text>
+        )}
+      </View>
       {isEditing ? (
         <View style={styles.buttonContainer}>
-          <Button title="Confirmar" onPress={handleSaveChanges} />
-          <Button title="Cancelar" onPress={handleCancelEdit} />
+          <Button title="Confirmar" onPress={handleSaveChanges} style={styles.saveButton} />
+          <Button title="Cancelar" onPress={handleCancelEdit} style={styles.cancelButton} />
         </View>
       ) : (
         <Button title="Editar" onPress={handleEdit} />
@@ -188,33 +231,74 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#f4f4f4',
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  profileImageContainer: {
+    position: 'relative',
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginBottom: 20,
+    borderWidth: 3,
+    borderColor: '#3498db',
+  },
+  changeImageOverlay: {
+    position: 'absolute',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: 'rgba(52, 152, 219, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  changeImageText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   field: {
-    marginBottom: 20,
+    marginBottom: 15,
     width: '100%',
   },
   fieldLabel: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#333',
   },
   fieldValue: {
     fontSize: 16,
+    color: '#555',
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
+    marginBottom: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    marginBottom: 20,
+  },
+  saveButton: {
+    backgroundColor: '#2ecc71',
+  },
+  cancelButton: {
+    backgroundColor: '#e74c3c',
+  },
+  buttonText: {
+    color: '#fff',
   },
 });
 

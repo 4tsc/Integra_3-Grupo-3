@@ -47,30 +47,32 @@ function Images(pool) {
     router.get('/images/:id', async (req, res) => {
         const userId = req.params.id;
         console.log('ID del usuario recibido:', userId);
-
+    
         try {
             const connection = await pool.getConnection();
             const [rows] = await connection.execute('SELECT imagen_usuario FROM usuario WHERE id_usuario = ?', [userId]);
             connection.release();
-
+    
             if (rows.length === 1) {
-                // res.status(200).json(rows[0]);
                 const imageName = rows[0].imagen_usuario;
                 const pathImage = path.join(__dirname, '../public/uploads/' + imageName);
+                
                 if (fs.existsSync(pathImage)) {
                     res.sendFile(pathImage);
                 } else {
+                    // User has no image, send default image
                     res.sendFile(path.join(__dirname, '../public/uploads/Imagen_perfil.png'));
                 }
             } else {
-                res.status(404).json({ mensaje: 'Usuario no encontrado' });
+                // User not found, send default image
+                res.sendFile(path.join(__dirname, '../public/uploads/Imagen_perfil.png'));
             }
         } catch (error) {
             console.error('Error al obtener el usuario:', error);
             res.status(500).json({ mensaje: 'Error interno del servidor' });
         }
-    }
-    );
+    });
+    
 
     return router;
 }

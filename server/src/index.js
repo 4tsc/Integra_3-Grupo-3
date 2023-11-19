@@ -8,6 +8,10 @@ const cors = require("cors");
 const path = require('path');
 const uuid = require('uuid/v4');
 
+const sgMail = require('@sendgrid/mail');
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 // Initializations
 const app = express();
 
@@ -34,6 +38,10 @@ const pool = mysql.createPool({
 app.use(require('./routes/image.routes')(pool));
 app.use(require('./routes/auth.routes')(pool));
 app.use(require('./routes/user.routes')(pool));
+app.use(require('./routes/hours.routes')(pool));
+app.use(require('./routes/advisor.routes')(pool));
+app.use(require('./routes/email.routes')(sgMail));
+
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
