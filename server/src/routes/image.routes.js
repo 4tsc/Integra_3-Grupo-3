@@ -46,7 +46,7 @@ function Images(pool) {
     
     router.get('/images/:id', async (req, res) => {
         const userId = req.params.id;
-        console.log('ID del usuario recibido:', userId);
+        console.log('ID del usuario recibido imagenens:', userId);
     
         try {
             const connection = await pool.getConnection();

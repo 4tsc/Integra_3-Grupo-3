@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList } from "react-native";
+import { View, Text, Button, FlatList, Image, StyleSheet } from 'react-native';
 import axios from 'axios';
 
 const ListarScreen = ({ userId }) => {
@@ -31,7 +31,7 @@ const ListarScreen = ({ userId }) => {
     };
 
     fetchData();
-  }, [userId]);
+  }, [userId.userId]);
   
   useEffect(() => {
     const fetchAsesorData = async (id_asesor) => {
@@ -47,7 +47,7 @@ const ListarScreen = ({ userId }) => {
 
   const fetchAsesorName = async (id_asesor) => {
     try {
-      const response = await fetch(`http://192.168.1.101:8080/asesores/${id_asesor}`);
+      const response = await fetch(`http://192.168.0.4:8080/asesores/${id_asesor}`);
       const userData = await response.json();
 
       const idUsuario = userData.id_usuario; // Extract id_usuario from the response
@@ -66,7 +66,7 @@ const ListarScreen = ({ userId }) => {
 
   const fetchImage = async (idUsuario, idAsesor) => {
     try {
-      const response = await axios.get(`http://192.168.1.101:8080/images/${idUsuario}`, {
+      const response = await axios.get(`http://192.168.0.4:8080/images/${idUsuario}`, {
         responseType: 'blob',
       });
 
@@ -92,7 +92,7 @@ const ListarScreen = ({ userId }) => {
 
   const handleEliminar = async (horaId) => {
     try {
-      await axios.delete(`http://192.168.1.101:8080/horas/${userId}/${horaId}`);
+      await axios.delete(`http://192.168.0.4:8080/horas/${userId.userId}/${horaId}`);
       setHoras((prevHoras) => prevHoras.filter((hora) => hora.id !== horaId));
     } catch (error) {
       console.error('Error al eliminar la entrada:', error);

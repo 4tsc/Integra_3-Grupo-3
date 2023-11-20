@@ -71,6 +71,30 @@ function UserConfig(pool) {
         }
     });
 
+    router.get('/obtener-nombre-usuario/:userId', async (req, res) => {
+        const connection = await pool.getConnection();
+        const userId = req.params.userId;
+      
+        try {
+          // Realiza una consulta SQL para obtener el nombre del usuario por userID
+          const [rows] = await connection.execute('SELECT nombre FROM usuario WHERE id_usuario = ?', [userId]);
+      
+          if (rows.length > 0) {
+            const nombreUsuario = rows[0].nombre;
+            console.log('Nombre de usuario obtenido:', nombreUsuario);
+            res.status(200).json({ nombre: nombreUsuario });
+          } else {
+            res.status(404).json({ error: 'Usuario no encontrado' });
+          }
+        } catch (error) {
+          console.error('Error al ejecutar la consulta SQL:', error);
+          res.status(500).json({ error: 'Error interno del servidor' });
+        } finally {
+          // Asegúrate de liberar la conexión después de su uso
+          connection.release();
+        }
+      });
+
     return router;
    }
 
