@@ -5,9 +5,12 @@ import { useNavigation } from '@react-navigation/native';
 import { Pressable } from 'react-native';
 //test
 
-function LogOut() {
+function LogOut({ onLogout }) {
   const navigation = useNavigation();
+
   const handlePress = () => {
+    // Realiza el cierre de sesión llamando a la función onLogout
+    onLogout();
     navigation.navigate('LogInScreen');
   };
   return (
