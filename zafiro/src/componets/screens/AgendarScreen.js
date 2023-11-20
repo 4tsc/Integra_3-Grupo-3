@@ -9,7 +9,7 @@ import { styles_Agendar } from '../styles/styles';
 import { useNavigation } from '@react-navigation/native';
 
 const AgendarScreen = ({ userId }) => {
-  const [selectedAsesor, setSelectedAsesor] = useState({ id_asesor: null, nombre: null, correo: null });
+  const [selectedAsesor, setSelectedAsesor] = useState({ id_asesor: null, nombre: null, correo: null, enlace: null, oficina: null });
   const [asesores, setAsesores] = useState([]);
   const [calendars, setCalendars] = useState([]);
   const [selectedCalendarId, setSelectedCalendarId] = useState(null);
@@ -24,6 +24,7 @@ const AgendarScreen = ({ userId }) => {
   const [timeButtonColor, setTimeButtonColor] = useState('#23c0eb'); // Estado para el color del botón de la hora
   const [modoReunionColor, setModoReunionColor] = useState('#23c0eb'); // Estado para el color del modo de reunión
   const [nombreUsuario, setNombreUsuario] = useState('');
+  const [correoUsuario, setCorreoUsuario] = useState('');
   const navigation = useNavigation();
 
   const motivoConsultaOptions = [
@@ -35,6 +36,7 @@ const AgendarScreen = ({ userId }) => {
     'Diseño de Recursos Multimedia',
     'Seguimiento y Estudio',
     'Guías de Aprendizaje',
+    'Pruebas'
   ];
 
   useEffect(() => {
@@ -46,12 +48,22 @@ const AgendarScreen = ({ userId }) => {
     console.log("obteniendo nombre...")
     console.log("probando en ", userId.userId)
     try {
-      const response = await axios.get(`http://192.168.0.4:8080/obtener-nombre-usuario/${userId.userId}`);
+      const response = await axios.get(`http://192.168.0.3:8080/obtener-nombre-usuario/${userId.userId}`);
+      // if (response.status === 200) {
+      //   const asesoresObtenidos = response.data.map((asesor) => ({
+      //     id_asesor: asesor.id_asesor,
+      //     nombre: asesor.nombre,
+      //     correo: asesor.correo,
+      //     enlace: asesor.enlace,
+      //     oficina: asesor.oficina,
+      //   }));
 
       if (response.status === 200) {
-        const nombreUsuario = response.data.nombre;
-        setNombreUsuario(nombreUsuario);
-        console.log('username: ', nombreUsuario)
+        const { nombre, correo } = response.data; // Extraer nombre y correo del objeto response.data
+        setNombreUsuario(nombre);
+        setCorreoUsuario(correo); // Suponiendo que hay una función setCorreoUsuario para actualizar el estado del correo
+        console.log('Nombre:', nombre);
+        console.log('Correo:', correo);
       } else {
         console.error('Error al obtener el nombre del usuario');
         Alert.alert('Error', 'No se pudo obtener el nombre del usuario.');
@@ -140,7 +152,7 @@ const AgendarScreen = ({ userId }) => {
           console.log("id usuario:", userId.userId);
 
           try {
-            const response = await axios.post('http://192.168.0.4:8080/crear-hora', {
+            const response = await axios.post('http://192.168.0.3:8080/crear-hora', {
               idUsuario: userId.userId,
               idAsesor: selectedAsesor.id_asesor,
               fecha: eventDate,
@@ -156,21 +168,6 @@ const AgendarScreen = ({ userId }) => {
               title: '¡Cita Agendada!',
               body: 'Se ha agendado correctamente tu cita con el asesor.',
             };
-
-            const { data: token } = await axios.post('http://192.168.0.4:8080/get-notification-token', {
-              userId: userID,
-            });
-
-            if (token) {
-              const trigger = new Date(selectedDateTime.getTime() + 5 * 60 * 1000);
-              await Notifications.scheduleNotificationAsync({
-                content: notificationContent,
-                trigger,
-              });
-              console.log('Notificación programada para 5 minutos después del evento.');
-            } else {
-              console.warn('Token de notificación no disponible.');
-            }
             
           } catch (error) {
             console.error('Error al realizar la solicitud para crear hora:', error);
@@ -179,14 +176,20 @@ const AgendarScreen = ({ userId }) => {
 
           try {
             console.log(selectedAsesor.correo)
-            const response = await axios.post('http://192.168.0.4:8080/enviar-correo', {
+            console.log(selectedAsesor.oficina)
+            console.log(selectedAsesor.enlace)
+            console.log('Modo reunion:',selectedModoReunion)
+            const response = await axios.post('http://192.168.0.3:8080/enviar-correo', {
               especialidad: motivoConsulta,
-              nombreAsesor: selectedAsesor,
+              nombreAsesor: selectedAsesor.nombre,
               nombreDocente: nombreUsuario,
               fecha: `${eventDate.getFullYear()}-${(eventDate.getMonth() + 1).toString().padStart(2, '0')}-${eventDate.getDate().toString().padStart(2, '0')}`,
               hora: `${eventTime.getHours().toString().padStart(2, '0')}:${eventTime.getMinutes().toString().padStart(2, '0')}`,
-              correoDocente: 'c.a.ulloa.vera@gmail.com',//esto debe cambiarse por lo del Docente(quien inicia sesion)
+              correoDocente: correoUsuario,//esto debe cambiarse por lo del Docente(quien inicia sesion)
               correoAsesor: selectedAsesor.correo,//esto debe cambiarse por el correo del Asesor seleccionado
+              enlace: selectedAsesor.enlace,
+              oficina: selectedAsesor.oficina,
+              modoreunion: selectedModoReunion,
             });
             console.log('Solicitud al servidor para enviar correo electrónico exitosa:', response.data);
           } catch (error) {
@@ -212,7 +215,7 @@ const AgendarScreen = ({ userId }) => {
     try {
       console.log('Obtener asesores se llamó.');
       console.log('Motivo de consulta a enviar:', motivoConsulta);
-      const response = await axios.post('http://192.168.0.4:8080/obtener-asesores', {
+      const response = await axios.post('http://192.168.0.3:8080/obtener-asesores', {
         motivoConsulta,
       });
 
@@ -223,6 +226,8 @@ const AgendarScreen = ({ userId }) => {
           id_asesor: asesor.id_asesor,
           nombre: asesor.nombre,
           correo: asesor.correo,
+          enlace: asesor.enlace,
+          oficina: asesor.oficina,
         }));
         setAsesores(asesoresObtenidos);
         console.log('Asesores obtenidos:', asesoresObtenidos);
@@ -381,7 +386,7 @@ const AgendarScreen = ({ userId }) => {
           renderItem={({ item }) => (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: '15%', marginVertical: '4%'}}>
               <Text>{item.nombre}</Text>
-              <Button title="Elegir" onPress={() => setSelectedAsesor({ id_asesor: item.id_asesor, nombre: item.nombre, correo: item.correo })} />
+              <Button title="Elegir" onPress={() => setSelectedAsesor({ id_asesor: item.id_asesor, nombre: item.nombre, correo: item.correo, enlace: item.enlace, oficina: item.oficina })} />
             </View>
           )}
         />

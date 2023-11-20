@@ -15,7 +15,7 @@ const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
         contraseña: text2,
       };
 
-      const responseAsesor = await fetch('http://192.168.0.4:8080/auth_asesor', {
+      const responseAsesor = await fetch('http://192.168.0.3:8080/auth_asesor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ const Log_in = ({ onLogin }) => { // Recibe la función onLogin como prop
           console.error('Error al parsear respuesta JSON del asesor:', jsonError);
         }
       } else {
-        const responseUsuario = await fetch('http://192.168.0.4:8080/auth_usuario', {
+        const responseUsuario = await fetch('http://192.168.0.3:8080/auth_usuario', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -77,12 +77,14 @@ function UserConfig(pool) {
       
         try {
           // Realiza una consulta SQL para obtener el nombre del usuario por userID
-          const [rows] = await connection.execute('SELECT nombre FROM usuario WHERE id_usuario = ?', [userId]);
+          const [rows] = await connection.execute('SELECT nombre, correo FROM usuario WHERE id_usuario = ?', [userId]);
       
           if (rows.length > 0) {
             const nombreUsuario = rows[0].nombre;
+            const correoUsuario = rows[0].correo; // Agrega esta línea para obtener el correo
             console.log('Nombre de usuario obtenido:', nombreUsuario);
-            res.status(200).json({ nombre: nombreUsuario });
+            console.log('Correo de usuario obtenido:', correoUsuario);
+            res.status(200).json({ nombre: nombreUsuario, correo: correoUsuario });
           } else {
             res.status(404).json({ error: 'Usuario no encontrado' });
           }

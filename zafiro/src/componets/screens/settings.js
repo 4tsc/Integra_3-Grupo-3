@@ -14,20 +14,21 @@ function ProfileScreen({ userId }) {
   const [showPassword, setShowPassword] = useState(false);
   const [imageChanged, setImageChanged] = useState(false);
 
+  const fetchUserData = async () => {
+    try {
+      console.log("llamando datos...")
+      const response = await fetch(`http://192.168.0.3:8080/users/${userId.userId}`);
+      const userData = await response.json();
+      setName(userData.nombre);
+      setEmail(userData.correo);
+      console.log("Datos Cargados")
+    } catch (error) {
+      console.error('Error al cargar los datos del usuario', error);
+    }
+  };
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        console.log("llamando datos...")
-        const response = await fetch(`http://192.168.0.4:8080/users/${userId.userId}`);
-        const userData = await response.json();
-        setName(userData.nombre);
-        setEmail(userData.correo);
-      } catch (error) {
-        console.error('Error al cargar los datos del usuario', error);
-      }
-    };
-
     fetchUserData();
+    
   }, [userId.userId]);
 
   const handleEdit = () => {
@@ -40,7 +41,7 @@ function ProfileScreen({ userId }) {
       const userUpdateData = { nombre: name, correo: email, pass: password };
 
       if (imageChanged) {
-        const response = await fetch(`http://192.168.0.4:8080/users/${userId.userId}`, {
+        const response = await fetch(`http://192.168.0.3:8080/users/${userId.userId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ function ProfileScreen({ userId }) {
         console.error('Error al actualizar los datos del usuario');
       }
     } else {
-      const response = await fetch(`http://192.168.0.4:8080/users/${userId.userId}`, {
+      const response = await fetch(`http://192.168.0.3:8080/users/${userId.userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +91,7 @@ function ProfileScreen({ userId }) {
         name: 'profile.jpg',
       });
 
-      const response = await fetch(`http://192.168.0.4:8080/images/upload/${userId.userId}`, {
+      const response = await fetch(`http://192.168.0.3:8080/images/upload/${userId.userId}`, {
         method: 'POST',
         body: formData,
       });
@@ -128,7 +129,7 @@ function ProfileScreen({ userId }) {
 
   const fetchImage = async () => {
     try {
-      const response = await axios.get(`http://192.168.0.4:8080/images/${userId.userId}`, {
+      const response = await axios.get(`http://192.168.0.3:8080/images/${userId.userId}`, {
         responseType: 'blob',
       });
 

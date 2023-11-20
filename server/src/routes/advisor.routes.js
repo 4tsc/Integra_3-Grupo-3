@@ -7,7 +7,7 @@ function AdvisorConfig(pool) {
       const motivoConsulta = req.body.motivoConsulta;
       console.log('Motivo de consulta recibido:', motivoConsulta);
 
-      const sql = `SELECT id_asesor, nombre, correo FROM asesor WHERE area LIKE ?`;
+      const sql = `SELECT * FROM asesor WHERE area LIKE ?`;
       const [rows] = await pool.query(sql, [`%${motivoConsulta}%`]);
 
       res.json(rows);
@@ -19,13 +19,15 @@ function AdvisorConfig(pool) {
 
 router.get('/asesores/:id', async (req, res) => {
   const advisorId = req.params.id;
-  console.log('ID del asesor recibido:', advisorId);
+  console.log('Id del asesor recibido:', advisorId);
 
   let connection;
 
   try {
     connection = await pool.getConnection();
-    const [rows] = await connection.execute('SELECT * FROM asesor WHERE id_asesor = ?', [advisorId]);
+    console.log('Id del asesor en consulta:', advisorId);
+
+    const [rows] = await connection.execute('SELECT * FROM usuario WHERE id_usuario = ?', [advisorId]);
 
     if (rows.length === 1) {
       res.status(200).json(rows[0]);
@@ -41,6 +43,8 @@ router.get('/asesores/:id', async (req, res) => {
     }
   }
 });
+
+
 return router;
 
 }
