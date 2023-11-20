@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList, StyleSheet, Image  } from "react-native";
+import { View, Text, Button, FlatList, StyleSheet, Image, Alert,  } from 'react-native';
 import axios from 'axios';
 
 const ListarScreen = ({ userId }) => {
   const [horas, setHoras] = useState([]);
   const [asesorData, setAsesorData] = useState({});
   const [imageBlobs, setImageBlobs] = useState({});
-  console.log(userId.userId, 'listar');
+
   const fetchData = async () => {
     try {
-      console.log(userId.userId, 'chupapu');
       const response = await axios.get(`http://192.168.0.3:8080/horas/${userId.userId}`);
       setHoras(response.data.rows);
-      console.log('Datos recibidos:', response.data);
     } catch (error) {
       console.error('Error al realizar la solicitud:', error);
     }
   };
-  useEffect(() => {
 
+  useEffect(() => {
     fetchData();
   }, [userId]);
+
   useEffect(() => {
     const fetchAsesorData = async (id_asesor) => {
       await fetchAsesorName(id_asesor);
@@ -32,49 +31,29 @@ const ListarScreen = ({ userId }) => {
       }
     });
   }, [horas, asesorData]);
-  // useEffect(() => {
-  //   const fetchAsesorData = async (id_asesor) => {
-  //   await fetchAsesorName(id_asesor);
-  //   };
-  //   const uniqueAsesorIds = new Set(horas.map((hora) => hora.id_asesor));
-  
-  //   uniqueAsesorIds.forEach((id_asesor) => {
-  //     if (!asesorData[id_asesor]) {
-  //       fetchAsesorData(id_asesor);
-  //     }
-  //   });
-  // }, [horas, asesorData]);
-  
 
   const fetchAsesorName = async (id_asesor) => {
     try {
-      console.log('id_asesor fetchAsesorName:', id_asesor);
       const response = await fetch(`http://192.168.0.3:8080/asesores/${id_asesor}`);
       const userData = await response.json();
-  
-      console.log('Respuesta desde asesores:', userData);
-  
+
       if (!userData || !userData.id_usuario) {
         console.error('La respuesta no contiene datos de usuario o id_usuario');
         return;
       }
-  
+
       const idUsuario = userData.id_usuario;
-  
+
       setAsesorData((prevData) => ({
         ...prevData,
         [id_asesor]: userData.nombre,
       }));
-  
-      // Call fetchImage with the extracted id_usuario
+
       fetchImage(idUsuario, id_asesor);
     } catch (error) {
       console.error('Error al cargar los datos del asesor', error);
     }
   };
-  
-  
-  
 
   const fetchImage = async (idUsuario, idAsesor) => {
     try {
@@ -108,10 +87,7 @@ const ListarScreen = ({ userId }) => {
         console.error('userId no está definido');
         return;
       }
-  
-      console.log('userId:', userId.userId);
-      console.log('Hora:', horaId);
-  
+
       await axios.delete(`http://192.168.0.3:8080/horas/${userId.userId}/${horaId}`);
       setHoras((prevHoras) => prevHoras.filter((hora) => hora.id !== horaId));
       Alert.alert('Hora Eliminada', 'La hora ha sido eliminada correctamente.');
@@ -119,43 +95,26 @@ const ListarScreen = ({ userId }) => {
       console.error('Error al eliminar la entrada:', error);
     }
   };
-  
-  
 
   return (
-  //  <View>
-   //   <Text>Horas del Usuario</Text>
-   //   <FlatList
-    //    data={horas}
-    //    keyExtractor={(hora) => hora.id.toString()}
-    //</View>    renderItem={({ item: hora }) => (
-   //       <View>
-   //         <Text>Fecha: {hora.fecha}</Text>
-   //         <Text>Hora: {hora.hora}</Text>
-   //         <Text>Descripción: {hora.descripcion}</Text>
-   //         <Button title="Eliminar" onPress={() => handleEliminar(hora.id)} />
-   //       </View>
-   //     )}
-   //   />
-   // </View>
-   <View style={styles.container}>
-   <Text style={styles.title}>Horas del Usuario</Text>
-   <FlatList
-     data={horas}
-     keyExtractor={(hora) => hora.id.toString()}
-     renderItem={({ item: hora }) => (
-       <View style={styles.itemContainer}>
-         <Image source={{ uri: imageBlobs[hora.id_asesor] }} style={styles.image} />
-         <Text style={styles.text}>Fecha: {hora.fecha}</Text>
-         <Text style={styles.text}>Hora: {hora.hora}</Text>
-         <Text style={styles.text}>
-           Descripción: Asesoría de {hora.descripcion} con {asesorData[hora.id_asesor] || 'Nombre no disponible'}
-         </Text>
-         <Button title="Eliminar" onPress={() => handleEliminar(hora.id)} />
-       </View>
-     )}
-   />
- </View>
+    <View style={styles.container}>
+      <Text style={styles.title}>Horas del Usuario</Text>
+      <FlatList
+        data={horas}
+        keyExtractor={(hora) => hora.id.toString()}
+        renderItem={({ item: hora }) => (
+          <View style={styles.itemContainer}>
+            <Image source={{ uri: imageBlobs[hora.id_asesor] }} style={styles.image} />
+            <Text style={styles.text}>Fecha: {hora.fecha}</Text>
+            <Text style={styles.text}>Hora: {hora.hora}</Text>
+            <Text style={styles.text}>
+              Descripción: Asesoría de {hora.descripcion} con {asesorData[hora.id_asesor] || 'Nombre no disponible'}
+            </Text>
+            <Button title="Eliminar" onPress={() => handleEliminar(hora.id)} />
+          </View>
+        )}
+      />
+    </View>
   );
 };
 

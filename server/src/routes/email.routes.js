@@ -56,14 +56,14 @@ function EmailConfig(sgMail) {
     
       const msg1 = {
         to: correoAsesor,
-        from: 'carlos.ulloa2020@alu.uct.cl',
+        from: 'tscheel2020@alu.uct.cl',
         subject: 'Se ha reservado una Consulta de Asesoría',
         html: HTMLAsesor,
       };
     
       const msg2 = {
         to: correoDocente,
-        from: 'carlos.ulloa2020@alu.uct.cl',
+        from: 'tscheel2020@alu.uct.cl',
         subject: `Se reservó una Consulta con ${nombreAsesor} para el ${fecha} a las ${hora}`,
         html: HTMLDocente,
       };
